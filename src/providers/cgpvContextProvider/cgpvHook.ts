@@ -12,6 +12,7 @@ import _ from 'lodash';
 export interface ICgpvHook {
   mapId: string;
   isInitialized: boolean;
+  isLoading: boolean;
   displayLanguage: string;
   displayTheme: string;
   displayProjection: number | string;
@@ -133,6 +134,9 @@ export function useCgpvHook(): ICgpvHook {
     });*/
     setConfigJson({ ...data });
     setMapId(theMapId);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
   };
 
   //deletes old map and creates a new map
@@ -182,6 +186,7 @@ export function useCgpvHook(): ICgpvHook {
   //when config settings changes recreate map
   const handleConfigJsonChange = (data: any) => {
     // pre-select theme and projection from config file
+    setIsLoading(true);
     setDisplayTheme(data.theme);
     setDisplayProjection(data.map.viewSettings.projection);
 
@@ -230,6 +235,7 @@ export function useCgpvHook(): ICgpvHook {
     mapHeight,
     setMapHeight,
     isInitialized,
+    isLoading,
     applyWidthHeight,
 
     initializeMap,

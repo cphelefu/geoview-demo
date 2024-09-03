@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { Box, Button } from '@mui/material';
-import { CopyToClipboardButton } from './CopyToClipboard';
+import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
 
 interface ConfigTextEditorProps {
 
@@ -64,7 +64,7 @@ export function ConfigTextEditor(props: ConfigTextEditorProps) {
     <Box sx={{ display: 'flex', flexDirection: 'column', position:'relative' }}>
       <Box className="config-editor" sx={{position: 'relative'}}>
         <Box sx={{position: 'absolute', top: 5, right: 10}}>
-          <CopyToClipboardButton textToCopy={editorText || ''} />
+          <ConfigSaveUploadButtons showCopy={true} />
         </Box>
         <div className="line-numbers">
           {generateArray(numberOfLines).map((lineNumber) => (
