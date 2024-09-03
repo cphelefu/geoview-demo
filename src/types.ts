@@ -8,4 +8,5 @@ export type ConfigFileResource = {
 export type ListOptionType = {
   title: string;
   value: string | number;
+  group?: string;
 };

@@ -5,7 +5,7 @@ import javascript from "highlight.js/lib/languages/javascript";
 import { useEffect, useRef, useState } from "react";
 import { Box, Button, Popover } from '@mui/material';
 import JavascriptIcon from '@mui/icons-material/Javascript';
-import { CopyToClipboardButton } from './CopyToClipboard';
+import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
 
 hljs.registerLanguage("javascript", javascript);
 
@@ -27,7 +27,7 @@ export const CodeSnippet = (props: CodeSnippetProps) => {
   return (
     <Box sx={{position: 'relative', minHeight: '80px', minWidth: '500px'}}>
       <Box sx={{position: 'absolute', top: 5, right: 5}}>
-        <CopyToClipboardButton textToCopy={props.code || ''} />
+        <ConfigSaveUploadButtons textToCopy={props.code || ''} />
       </Box>
       <pre>
         <code className="javascript" ref={codeRef}>
