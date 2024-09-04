@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { CodeSnippet } from './CodeSnippet';
 
 interface GeoViewMapProps {
-  showConfigsList?: boolean;
   showConfigEditor?: boolean;
   config: string | object;
   configIsFilePath?: boolean;
@@ -32,7 +31,6 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const { initializeMap, isInitialized } = cgpvContext;
   const {
-    showConfigsList,
     showConfigEditor = true,
     config = DEFAULT_CONFIG,
     configIsFilePath,
@@ -152,18 +150,17 @@ function GeoViewMap(props: GeoViewMapProps) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          <ConfigurationDrawer showConfigsList={showConfigsList} />
+          <ConfigurationDrawer />
         </Drawer>
         <Drawer
           variant="permanent"
           sx={{
-            bgcolor: '#f4f4f4',
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: '5px solid lightgray', },
           }}
           open
         >
-          <ConfigurationDrawer showConfigsList={showConfigsList}  />
+          <ConfigurationDrawer />
         </Drawer>
       </Box>
       <Box component="main" sx={{ flexGrow: 1, pt: 1, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>

@@ -49,7 +49,6 @@ function PackageSwiperPage() {
       <GeoViewMap 
       config={`package-swiper3-config.json`} 
       configIsFilePath={true}
-      showConfigsList={false} 
       codeSnippet={codeSnippet} top={renderTop()} bottom={renderBottom()}>
         <p>
           I am the children section

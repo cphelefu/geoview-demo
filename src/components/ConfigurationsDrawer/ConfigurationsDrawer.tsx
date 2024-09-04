@@ -6,11 +6,8 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import ApiFunctionsTab from './ApiFunctionsTab/ApiFunctionsTab';
 import { MapBuilderTab } from './MapBuilderTab/MapBuilderTab';
 
-interface ConfigurationDrawerProps {
-  showConfigsList?: boolean;
-}
 
-export default function ConfigurationDrawer(props: ConfigurationDrawerProps) {
+export default function ConfigurationDrawer() {
   const [selectedTab, setSelectedTab] = useState('config-builder');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -18,7 +15,7 @@ export default function ConfigurationDrawer(props: ConfigurationDrawerProps) {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1', bgcolor: '#f5f5f5', minHeight: {md: '100vh'} }}>
+    <Box sx={{ width: '100%', typography: 'body1', minHeight: {md: '100vh'} }}>
       <TabContext value={selectedTab}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleTabChange} aria-label="handling tabs change" variant="scrollable" scrollButtons="auto">
@@ -26,8 +23,8 @@ export default function ConfigurationDrawer(props: ConfigurationDrawerProps) {
             <Tab icon={<SettingsIcon />} label="API Functions" value="interactive-map" />
           </TabList>
         </Box>
-        <TabPanel value="interactive-map" sx={{ padding: 0 }}>
-          <ApiFunctionsTab showConfigsList={props.showConfigsList} />
+        <TabPanel value="interactive-map" >
+          <ApiFunctionsTab />
         </TabPanel>
         <TabPanel value="config-builder">
           <MapBuilderTab />

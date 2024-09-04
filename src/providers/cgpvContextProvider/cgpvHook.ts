@@ -154,19 +154,6 @@ export function useCgpvHook(): ICgpvHook {
     setMapId(newMapId);
   };
 
-  //creates map based on state data
-  const createMap = () => {
-    setTimeout(() => {
-      //waiting for states that were prior to this function to update
-      const mapDiv = document.getElementById(mapId);
-      if (applyWidthHeight) {
-        mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-      }
-
-      cgpv.api.createMapFromConfig(mapId, JSON.stringify(configJson));
-    }, 500);
-  };
-
   const handleApplyWidthHeight = (val: boolean) => {
     setApplyWidthHeight(val);
     reCreateMap();

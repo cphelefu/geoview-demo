@@ -1,57 +1,99 @@
-import { LoadingButton } from '@mui/lab';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, FormControl, List, ListItem, ListItemButton, ListItemText, TextField, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CGPVContext } from '../../../providers/cgpvContextProvider/CGPVContextProvider';
-import GeneralAccordion from './GeneralAccordion';
-import { NotificationsAccordion } from './EventsAccordion';
+import _ from 'lodash';
+import { CodeSnipperPopup } from '../../CodeSnippet';
+import apiFunctions from './apiFunctions';
 
-interface ApiFunctionsTab {
-  showConfigsList?: boolean;
+export interface ApiFuncItem {
+  group: string;
+  description: string;
+  secondaryDescription?: string;
+  function: (mapId: string) => void;
+  code?: string;
 }
 
-export default function ApiFunctionsTab(props: ApiFunctionsTab) {
+export default function ApiFunctionsTab() {
   const cgpvContext = useContext(CGPVContext);
 
   if (!cgpvContext) {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { handleReloadMap, handleRemoveMap } = cgpvContext;
+  const { mapId } = cgpvContext;
+
+  const [apiFunctionsList, setApiFunctionsList] = useState<ApiFuncItem[]>(apiFunctions);
+
+  const groups =  _(apiFunctionsList).orderBy( ['group', 'description'], ['asc', 'asc']).groupBy('group').value();
+  const groupNames = Object.keys(groups);
+
+  function trimFirstSubstring(text: string, sub: string): string {
+    const regex = new RegExp(sub + '(?=.*)', 'i'); // Case-insensitive (optional)
+    return text.replace(regex, '');
+  }
+
+  function trimLastSubstring(text: string, sub: string): string {
+    const index = text.lastIndexOf(sub);
+    if (index !== -1) { // Substring found
+      return text.slice(0, index) + text.slice(index + sub.length);
+    } else { // Substring not found
+      return text;
+    }
+  }
+
+  const renderCodePopupButton = (item: ApiFuncItem) => {
+    if(item.code) {
+      return <CodeSnipperPopup code={item.code} />;
+    }
+    let code = `${item.function}`;
+    code = trimFirstSubstring(code, `(mapId) => {`);
+    code = code.replace('(mapId) => {', '');
+    code = trimLastSubstring(code, `}`).trim();
+    return <CodeSnipperPopup code={code} />;
+  }
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filterText = e.target.value;
+    if (filterText === '') {
+      setApiFunctionsList(apiFunctions);
+      return;
+    }
+    const filteredList = apiFunctions.filter((item) => 
+      item.description.toLowerCase().includes(filterText.toLowerCase()) 
+    || item.secondaryDescription?.toLowerCase().includes(filterText.toLowerCase())
+    || item.group.toLowerCase().includes(filterText.toLowerCase()));
+    setApiFunctionsList(filteredList);
+  }
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <FormControl sx={{}}>
+        <TextField
+          onChange={handleFilterChange}
+          id="filter-text"  size="small" label="Enter filter text here..." variant="outlined" sx={{bgColor: 'white'}} />
+      </FormControl>
 
-      <ButtonGroup variant="outlined" aria-label="Loading button group" size="small" sx={{mt: 2}}>
-        <Button onClick={handleReloadMap}>Reload Map</Button>
-        <LoadingButton onClick={handleRemoveMap}>Remove Map</LoadingButton>
-      </ButtonGroup>
+      {groupNames.map((groupName) => (
+        <Accordion sx={{mt: 1}}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+            <Typography>{groupName}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List dense={true}>
+              {groups[groupName].map((item) => (
+                <ListItem secondaryAction={renderCodePopupButton(item)}>
+                  <ListItemButton onClick={() => item.function(mapId)}>
+                    <ListItemText primary={item.description} secondary={item.secondaryDescription} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </AccordionDetails>
+        </Accordion>
+      ))}
 
-      <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
-          <Typography>General</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <GeneralAccordion showConfigsList={props.showConfigsList} />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2-content" id="panel2-header">
-          <Typography>Notifications/Events</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <NotificationsAccordion />
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2-content" id="panel2-header">
-          <Typography>Panels - Navbar</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <NotificationsAccordion />
-        </AccordionDetails>
-      </Accordion>
     </Box>
   );
 }
