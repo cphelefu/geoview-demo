@@ -75,19 +75,22 @@ export default function ApiFunctionsTab() {
           id="filter-text"  size="small" label="Enter filter text here..." variant="outlined" sx={{bgColor: 'white'}} />
       </FormControl>
 
-      {groupNames.map((groupName) => (
-        <Accordion sx={{mt: 1}}>
+      {groupNames.map((groupName, index) => (
+        <Accordion sx={{mt: 1}} defaultExpanded={index === 0}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} >
             <Typography>{groupName}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <List dense={true}>
-              {groups[groupName].map((item) => (
+              {groups[groupName].map((item, ind) => (
+                <>
                 <ListItem secondaryAction={renderCodePopupButton(item)}>
                   <ListItemButton onClick={() => item.function(mapId)}>
                     <ListItemText primary={item.description} secondary={item.secondaryDescription} />
                   </ListItemButton>
                 </ListItem>
+                {(ind < groups[groupName].length - 1) && <Divider />}
+                </>
               ))}
             </List>
           </AccordionDetails>

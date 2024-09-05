@@ -14,7 +14,7 @@ export function ConfigTextEditor(props: ConfigTextEditorProps) {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, validateConfigJson, createMapFromConfigText } = cgpvContext;
+  const { configJson, validateConfigJson, createMapFromConfigText, handleApplyStateToConfigFile } = cgpvContext;
 
   const textEditorRef = useRef<HTMLTextAreaElement>(null);
 
@@ -63,6 +63,11 @@ export function ConfigTextEditor(props: ConfigTextEditorProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', position:'relative' }}>
       <Box className="config-editor" sx={{position: 'relative'}}>
+        <Box sx={{position: 'absolute', top: 5, left: 10}}>
+          <Button variant="contained" color="primary" size="small" onClick={handleApplyStateToConfigFile}>
+            Apply State to Config File
+          </Button>
+        </Box>
         <Box sx={{position: 'absolute', top: 5, right: 10}}>
           <ConfigSaveUploadButtons showCopy={true} />
         </Box>

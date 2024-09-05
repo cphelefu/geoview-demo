@@ -160,6 +160,28 @@ const apiFuncs: ApiFuncItem[] = [
     },
     code: `cgpv.api.maps.Map1.clickMarkerIconShow({lnglat: [-90, 60]})`
   },
+  {
+    group: "Map projection",
+    description: "Set map project to LCC(3978)",
+    function: (mapId: string) => {
+      cgpv.api.maps[mapId].setProjection(3978);
+    }
+  },
+  {
+    group: "Map projection",
+    description: "Set map project to Web Mercator(3857)",
+    function: (mapId: string) => {
+      cgpv.api.maps[mapId].setProjection(3857);
+    }
+  },
+  {
+    group: "General",
+    description: "Get map config from map state",
+    secondaryDescription: "This function will log the map config to the console",
+    function: (mapId: string) => {
+      console.log(cgpv.api.maps[mapId].createMapConfigFromMapState());
+    }
+  }
 ];
 
 

@@ -1,21 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  DEFAULT_DISPLAY_LANGUAGE,
-  DEFAULT_DISPLAY_PROJECTION,
-  DEFAULT_DISPLAY_THEME,
   DEFAULT_MAP_HEIGHT,
   DEFAULT_MAP_WIDTH,
 } from '../../constants';
 import _ from 'lodash';
+import { EventListItemType } from '../../types';
 
 export interface ICgpvHook {
   mapId: string;
   isInitialized: boolean;
   isLoading: boolean;
-  displayLanguage: string;
-  displayTheme: string;
-  displayProjection: number | string;
   configFilePath: string;
   configJson: object;
   mapWidth: number;
@@ -23,26 +18,21 @@ export interface ICgpvHook {
   setMapWidth: React.Dispatch<React.SetStateAction<number>>;
   mapHeight: number;
   setMapHeight: React.Dispatch<React.SetStateAction<number>>;
+  eventsList: EventListItemType[];
 
   initializeMap: (mapId: string, config: string | object, configIsFilePath?: boolean) => void;
-  handleDisplayLanguage: (e: any) => void;
-  handleDisplayTheme: (e: any) => void;
-  handleDisplayProjection: (e: any) => void;
-  handleReloadMap: () => void;
   handleRemoveMap: () => string;
-  handleConfigFileChange:  (filePath: string | null) => void;
+  handleConfigFileChange: (filePath: string | null) => void;
   handleConfigJsonChange: (data: any) => void;
   handleApplyWidthHeight: (val: boolean) => void;
   validateConfigJson: (json: string) => string | null;
   createMapFromConfigText: (configText: string) => void;
   updateConfigProperty: (property: string, value: any) => void;
+  handleApplyStateToConfigFile: () => void;
 }
 
 export function useCgpvHook(): ICgpvHook {
-  const [mapId, setMapId] = useState<string>('sandboxMap2');
-  const [displayLanguage, setDisplayLanguage] = useState<string>(DEFAULT_DISPLAY_LANGUAGE);
-  const [displayTheme, setDisplayTheme] = useState<string>(DEFAULT_DISPLAY_THEME);
-  const [displayProjection, setDisplayProjection] = useState<number | string>(DEFAULT_DISPLAY_PROJECTION);
+  const [mapId, setMapId] = useState<string>('sandboxMap3');
   const [applyWidthHeight, setApplyWidthHeight] = useState<boolean>(false);
   const [mapWidth, setMapWidth] = useState<number>(DEFAULT_MAP_WIDTH);
   const [mapHeight, setMapHeight] = useState<number>(DEFAULT_MAP_HEIGHT);
@@ -50,6 +40,109 @@ export function useCgpvHook(): ICgpvHook {
   const [configJson, setConfigJson] = useState<object>({});
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [eventsList, setEventsList] = useState<EventListItemType[]>([]);
+
+
+  const addEventToList = (eventName: string, description: string) => {
+    setEventsList((prevList) => {
+      return [...prevList, { eventName, description }];
+    });
+  };
+
+  const registerEventListeners = () => {
+    // Events=====================================================================================================================
+    // listen to layer added event
+    cgpv.api.maps[mapId].layer.onLayerAdded((sender: any, payload: any) => {
+      addEventToList('onLayerAdded', `layer ${payload.layerPath} added`);
+    });
+
+    // listen to layer loaded events
+    cgpv.api.maps[mapId].layer.onLayerLoaded((sender: any, payload: any) => {
+      addEventToList('onLayerLoaded', `layer ${payload.layerPath} loaded successfully`);
+    });
+
+    // listen to layer error events
+    cgpv.api.maps[mapId].layer.onLayerError((sender: any, payload: any) => {
+      addEventToList('addLayerError', `layer ${payload.layerPath} has an error`);
+    });
+
+    // listen to layer removed event
+    cgpv.api.maps[mapId].layer.onLayerRemoved((sender: any, payload: any) => {
+      addEventToList('onLayerRemoved', `layer ${payload.layerPath} removed`);
+    });
+
+    /*
+    // listen to individual layer loaded event
+    cgpv.api.maps[mapId].layer.getGeoviewLayer('nonmetalmines/5').onIndividualLayerLoaded((sender: any, payload:any) => {
+      cgpv.api.maps[mapId].notifications.addNotificationSuccess('Nonmetal mines has finished loading');
+      console.log(sender.olRootLayer.getSource().getFeatures());
+    });
+    
+    // listen to layer visibility changed event (individual geoview layer)
+    cgpv.api.maps[mapId].layer.getGeoviewLayer('uniqueValueId/1').onVisibleChanged((sender: any, payload:any) => {
+      cgpv.api.maps[mapId].notifications.addNotificationSuccess(`uniqueValueId/1 visibility set to ${payload.visible} - individual`);
+    });
+
+    // listen to layer visibility changed event (individual geoview layer)
+    cgpv.api.maps[mapId].layer.getGeoviewLayer('rcs.f4c51eaa-a6ca-48b9-a1fc-b0651da20509.en').onVisibleChanged((sender: any, payload:any) => {
+      cgpv.api.maps[mapId].notifications.addNotificationSuccess(`layer ${payload.layerPath} visibility set to ${payload.visible} - individual`);
+    });
+
+    // listen to layer status change event
+    cgpv.api.maps[mapId].layer.getLayerEntryConfig('uniqueValueId/1').onLayerStatusChanged((sender: any, payload:any) => {
+      addEventToList('getLayerEntryConfig', `uniqueValueId/1 status changed to ${payload.layerStatus}`);
+    });
+
+    // listen to layer filter applied event
+    cgpv.api.maps[mapId].layer.getGeoviewLayerHybrid('uniqueValueId/1').onLayerFilterApplied((sender: any, payload:any) => {
+      addEventToList('getGeoviewLayerHybrid', `Filter ${payload.filter} applied to ${payload.layerPath}`);
+    });
+        // listen to layer opacity changed event
+    cgpv.api.maps[mapId].layer.getGeoviewLayer('uniqueValueId/1').onLayerOpacityChanged((sender: any, payload:any) => {
+      addEventToList('getGeoviewLayer', `${payload.layerPath} opacity changed to ${payload.opacity}`);
+    });
+    */
+
+    // listen to layer item visibility changed event (any layers)
+    cgpv.api.maps[mapId].layer.onLayerVisibilityToggled((sender: any, payload:any) => {
+      addEventToList('onLayerVisibilityToggled', `layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
+    });
+
+    // listen to layer item visibility changed event (any layers)
+    cgpv.api.maps[mapId].layer.onLayerItemVisibilityToggled((sender: any, payload:any) => {
+      addEventToList('onLayerItemVisibilityToggled', `${payload.itemName} on layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
+    });
+
+    // listen to map zoom event
+    cgpv.api.maps[mapId].onMapZoomEnd((sender: any, payload:any) => {
+      addEventToList('onLayerItemVisibilityToggled', `Zoomed to level ${payload.zoom}`);
+    });
+
+    // listen to map move event
+    cgpv.api.maps[mapId].onMapMoveEnd((sender: any, payload:any) => {
+      addEventToList('onLayerItemVisibilityToggled', `Map moved to center latitude ${payload.lnglat[1]} and longitude ${payload.lnglat[0]}`);
+    });
+
+    // listen to map language changed event
+    cgpv.api.maps[mapId].onMapLanguageChanged((sender: any, payload:any) => {
+      addEventToList('onMapLanguageChanged', `Map language changed to ${payload.language}`);
+    });
+
+    // listen to basemap changed event
+    cgpv.api.maps[mapId].basemap.onBasemapChanged((sender: any, payload:any) => {
+      addEventToList('onBasemapChanged', `Basemap changed to ${payload.basemap.basemapId}`);
+    });
+
+    // listen to layer reordered event
+    cgpv.api.maps[mapId].stateApi.onLayersReordered((sender: any, payload:any) => {
+      addEventToList('onLayersReordered', `Layers reordered to ${payload.orderedLayers.map((layer: any) => layer.layerPath)}`);
+    });
+
+    // listen to map added to div event
+    cgpv.api.onMapAddedToDiv((sender: any, payload:any) => {
+       addEventToList('onMapAddedToDiv', `Map ${payload.mapId} added`);
+    });
+  };
 
   const readConfigFile = async (filePath: string) => {
     const res = await fetch(`./assets/configs/${filePath}`);
@@ -62,7 +155,7 @@ export function useCgpvHook(): ICgpvHook {
   const initializeMap = (mapId: string, config: string | object, configIsFilePath = false) => {
     if (isInitialized) return;
     setIsLoading(true);
-    if(configIsFilePath) {
+    if (configIsFilePath) {
       readConfigFile(config as string).then((data) => {
         console.log('i fetch a file ', data);
         initializeMap(mapId, data);
@@ -73,6 +166,7 @@ export function useCgpvHook(): ICgpvHook {
       handleCreateMap(mapId, configJson);
       cgpv.init((mapId: string) => {
         // write some code ...
+        registerEventListeners();
         setIsLoading(false);
       });
     }
@@ -103,24 +197,6 @@ export function useCgpvHook(): ICgpvHook {
     return newMapId;
   };
 
-  const handleReloadMap = () => {
-    cgpv.api.maps[mapId].reload();
-  };
-
-  const handleDisplayLanguage = (newValue: string) => {
-    setDisplayLanguage(newValue);
-    cgpv.api.maps[mapId].setLanguage(newValue);
-  };
-
-  const handleDisplayTheme = (newValue: string) => {
-    setDisplayTheme(newValue);
-    cgpv.api.maps[mapId].setTheme(newValue);
-  };
-
-  const handleDisplayProjection = (newValue: string | number) => {
-    setDisplayProjection(newValue);
-    cgpv.api.maps[mapId].setProjection(newValue);
-  };
 
   const handleCreateMap = (theMapId: string, data: any) => {
     const mapDiv = document.getElementById(theMapId);
@@ -129,9 +205,9 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
-    /*cgpv.init((mapId: string) => {
+    cgpv.init((mapId: string) => {
       // write some code ...
-    });*/
+    });
     setConfigJson({ ...data });
     setMapId(theMapId);
     setTimeout(() => {
@@ -174,8 +250,6 @@ export function useCgpvHook(): ICgpvHook {
   const handleConfigJsonChange = (data: any) => {
     // pre-select theme and projection from config file
     setIsLoading(true);
-    setDisplayTheme(data.theme);
-    setDisplayProjection(data.map.viewSettings.projection);
 
     const newMapId = handleRemoveMap();
     setTimeout(() => {
@@ -210,11 +284,13 @@ export function useCgpvHook(): ICgpvHook {
     handleConfigJsonChange(newConfig);
   };
 
+  const handleApplyStateToConfigFile = () => {
+    const state = cgpv.api.maps[mapId].createMapConfigFromMapState();
+    handleConfigJsonChange(state);
+  }
+
   return {
     mapId,
-    displayLanguage,
-    displayTheme,
-    displayProjection,
     configFilePath,
     configJson,
     mapWidth,
@@ -224,12 +300,9 @@ export function useCgpvHook(): ICgpvHook {
     isInitialized,
     isLoading,
     applyWidthHeight,
+    eventsList,
 
     initializeMap,
-    handleDisplayLanguage,
-    handleDisplayTheme,
-    handleDisplayProjection,
-    handleReloadMap,
     handleRemoveMap,
     handleConfigFileChange,
     handleConfigJsonChange,
@@ -237,5 +310,6 @@ export function useCgpvHook(): ICgpvHook {
     handleApplyWidthHeight,
     createMapFromConfigText,
     updateConfigProperty,
+    handleApplyStateToConfigFile
   };
 }
