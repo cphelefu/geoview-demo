@@ -138,10 +138,11 @@ export function useCgpvHook(): ICgpvHook {
       addEventToList('onLayersReordered', `Layers reordered to ${payload.orderedLayers.map((layer: any) => layer.layerPath)}`);
     });
 
+    /*
     // listen to map added to div event
     cgpv.api.onMapAddedToDiv((sender: any, payload:any) => {
        addEventToList('onMapAddedToDiv', `Map ${payload.mapId} added`);
-    });
+    });*/
   };
 
   const readConfigFile = async (filePath: string) => {
