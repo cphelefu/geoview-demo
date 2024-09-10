@@ -1,50 +1,33 @@
-# React + TypeScript + Vite
+# GeoView Config Builder / Demo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This application is a demo application for using the geoview map.
+It also includes the following;
+1. Config Builder - This helps users build configuration files and test them via UI. Users can also start with existing configurations.
+2. API Functions - This part of the application demonstrates how differents API functions work and how to use them. It provides code snippets of to invoke our API functions.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## STRUCTURE / ARCHITECT
+The tech stack for this application includes the following frameworks or technologies;
+* React / TypeScript
+* Material UI
+* Vite
+* React Router
+* Other npm libraries (e.g. lodash)
 
-## Expanding the ESLint configuration
+## Running The Project
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+First thing; we encourage you to folk the repo instead of cloning it - especially if you would like to contribute to it.
+If not; you can do ahead and clone it.
 
-- Configure the top-level `parserOptions` property like this:
+### Cloning the repo
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+```git clone https://github.com/Canadian-Geospatial-Platform/geoview-demo.git```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Install the packages
+``` npm run install```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Run the application
+```npm run serve```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### Deploying to GitHub Pages
+```npm run deploy```
