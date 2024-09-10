@@ -64,6 +64,7 @@ export const ConfigSaveUploadButtons = (props: ConfigSaveUploadButtonsProps) => 
         setOpen(true);
       } catch (error) {
         setMsg('Error: Invalid JSON file');
+        console.error(error);
         setOpen(true);
       }
     };

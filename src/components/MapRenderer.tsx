@@ -10,9 +10,8 @@ export function MapRenderer() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, mapHeight, mapWidth } = cgpvContext;
   return (
-    <Box id="sandboxMapContainer">
+    <Box id="sandboxMapContainer" sx={{ width: '100%', height: '500px'}}>
       <Box id="sandboxMap3" className="geoview-map" sx={{ width: '100%', height: '500px'}}></Box>
     </Box>
   );

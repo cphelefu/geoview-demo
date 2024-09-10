@@ -3,11 +3,7 @@ import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvide
 import { Box, Button } from '@mui/material';
 import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
 
-interface ConfigTextEditorProps {
-
-}
-
-export function ConfigTextEditor(props: ConfigTextEditorProps) {
+export function ConfigTextEditor() {
   const cgpvContext = useContext(CGPVContext);
 
   if (!cgpvContext) {

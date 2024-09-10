@@ -3,7 +3,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/default.css';
 import javascript from "highlight.js/lib/languages/javascript";
 import { useEffect, useRef, useState } from "react";
-import { Box, Button, IconButton, Popover } from '@mui/material';
+import { Box, IconButton, Popover } from '@mui/material';
 import JavascriptIcon from '@mui/icons-material/Javascript';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
 
@@ -40,6 +40,7 @@ export const CodeSnippet = (props: CodeSnippetProps) => {
 
 
 
+//eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CodeSnippetPopupProps extends CodeSnippetProps { }
 
 

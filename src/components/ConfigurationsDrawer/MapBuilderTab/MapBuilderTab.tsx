@@ -35,7 +35,7 @@ export function MapBuilderTab() {
       updateConfigProperty(property, value);
       return;
     } else {
-      let newConfig = { ...modifiedConfigJson };
+      const newConfig = { ...modifiedConfigJson };
       if (value === undefined) {
         _.unset(newConfig, property);
       } else {
