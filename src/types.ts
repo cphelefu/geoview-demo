@@ -1,8 +1,3 @@
-export type ConfigFileResource = {
-  filePath: string;
-  label: string;
-  group?: string;
-};
 
 
 export type ListOptionType = {
@@ -10,3 +5,9 @@ export type ListOptionType = {
   value: string | number;
   group?: string;
 };
+
+export type EventListItemType = {
+  eventName: string;
+  description: string;
+  status?: string;
+}

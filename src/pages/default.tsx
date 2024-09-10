@@ -6,7 +6,7 @@ import GeoViewPage from '../components/GeoViewPage';
 function DefaultPage() {
   return (
     <GeoViewPage>
-      <GeoViewMap config={DEFAULT_CONFIG} showConfigsList={true}/>
+      <GeoViewMap config={DEFAULT_CONFIG} />
     </GeoViewPage>
   );
 }

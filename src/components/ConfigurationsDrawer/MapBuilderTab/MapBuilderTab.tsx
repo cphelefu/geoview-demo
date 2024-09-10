@@ -9,10 +9,10 @@ import {
   Switch,
 } from '@mui/material';
 import { useContext, useState } from 'react';
-import { CGPVContext } from '../../../providers/cgpvContextProvider/CGPVContextProvider';
+import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 import _ from 'lodash';
 import PillsAutoComplete from '../../PillsAutoComplete';
-import { componentsOptions, footerTabslist, navBarOptions, appBarOptions, mapInteractionOptions, mapProjectionOptions, zoomOptions, themeOptions, CONFIG_FILES_LIST, corePackagesOptions } from '../../../constants';
+import { componentsOptions, footerTabslist, navBarOptions, appBarOptions, mapInteractionOptions, mapProjectionOptions, zoomOptions, themeOptions, CONFIG_FILES_LIST, corePackagesOptions } from '@/constants';
 import SingleSelectComplete from '../../SingleSelectAutoComplete';
 import { ConfigSaveUploadButtons } from '../../ConfigSaveUploadButtons';
 
@@ -35,7 +35,7 @@ export function MapBuilderTab() {
       updateConfigProperty(property, value);
       return;
     } else {
-      let newConfig = { ...modifiedConfigJson };
+      const newConfig = { ...modifiedConfigJson };
       if (value === undefined) {
         _.unset(newConfig, property);
       } else {

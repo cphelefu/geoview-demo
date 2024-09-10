@@ -9,17 +9,18 @@ import { DEFAULT_CONFIG } from '../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { CodeSnippet } from './CodeSnippet';
+import { EventsLog } from './EventsLog';
 
 interface GeoViewMapProps {
-  showConfigsList?: boolean;
   showConfigEditor?: boolean;
+  showEventsLog?: boolean;
   config: string | object;
   configIsFilePath?: boolean;
   codeSnippet?: string;
   children?: React.ReactNode;
   top?: React.ReactNode;
   bottom?: React.ReactNode;
-  
+
 }
 
 function GeoViewMap(props: GeoViewMapProps) {
@@ -32,8 +33,8 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const { initializeMap, isInitialized } = cgpvContext;
   const {
-    showConfigsList,
     showConfigEditor = true,
+    showEventsLog = true,
     config = DEFAULT_CONFIG,
     configIsFilePath,
     codeSnippet,
@@ -84,6 +85,7 @@ function GeoViewMap(props: GeoViewMapProps) {
             <Tab label="Map" value="map" />
             {showConfigEditor && <Tab label="Config Editor" value="config-editor" />}
             {codeSnippet && <Tab label="Code Snippet" value="code-snippet" />}
+            {showEventsLog && <Tab label="Events Log" value="events-log" />}
           </Tabs>
         </Box>
         <Box sx={{ display: selectedTab === 'map' ? 'unset' : 'none' }}>
@@ -96,6 +98,10 @@ function GeoViewMap(props: GeoViewMapProps) {
         }
         {codeSnippet && <Box sx={{ marginTop: '20px', display: selectedTab === 'code-snippet' ? 'unset' : 'none' }}>
           <CodeSnippet code={codeSnippet} />
+        </Box>
+        }
+        {showEventsLog && <Box sx={{ marginTop: '20px', display: selectedTab === 'events-log' ? 'unset' : 'none' }}>
+          <EventsLog />
         </Box>
         }
       </Box>
@@ -152,18 +158,17 @@ function GeoViewMap(props: GeoViewMapProps) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          <ConfigurationDrawer showConfigsList={showConfigsList} />
+          <ConfigurationDrawer />
         </Drawer>
         <Drawer
           variant="permanent"
           sx={{
-            bgcolor: '#f4f4f4',
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: '5px solid lightgray', },
           }}
           open
         >
-          <ConfigurationDrawer showConfigsList={showConfigsList}  />
+          <ConfigurationDrawer />
         </Drawer>
       </Box>
       <Box component="main" sx={{ flexGrow: 1, pt: 1, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>

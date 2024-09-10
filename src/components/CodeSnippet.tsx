@@ -3,9 +3,9 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/default.css';
 import javascript from "highlight.js/lib/languages/javascript";
 import { useEffect, useRef, useState } from "react";
-import { Box, Button, Popover } from '@mui/material';
+import { Box, IconButton, Popover } from '@mui/material';
 import JavascriptIcon from '@mui/icons-material/Javascript';
-import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
+import { CopyToClipboardButton } from './CopyToClipboardButton';
 
 hljs.registerLanguage("javascript", javascript);
 
@@ -25,9 +25,9 @@ export const CodeSnippet = (props: CodeSnippetProps) => {
 
 
   return (
-    <Box sx={{position: 'relative', minHeight: '80px', minWidth: '500px'}}>
+    <Box sx={{position: 'relative', minHeight: '80px', minWidth: '500px', pt: 4}}>
       <Box sx={{position: 'absolute', top: 5, right: 5}}>
-        <ConfigSaveUploadButtons textToCopy={props.code || ''} />
+        <CopyToClipboardButton textToCopy={props.code || ''} />
       </Box>
       <pre>
         <code className="javascript" ref={codeRef}>
@@ -40,6 +40,7 @@ export const CodeSnippet = (props: CodeSnippetProps) => {
 
 
 
+//eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CodeSnippetPopupProps extends CodeSnippetProps { }
 
 
@@ -59,9 +60,9 @@ export function CodeSnipperPopup(props: CodeSnippetPopupProps) {
 
   return (
     <div>
-      <Button aria-describedby={id} variant="contained" onClick={handleClick}>
+      <IconButton edge="end" onClick={handleClick}>
         <JavascriptIcon />
-      </Button>
+      </IconButton>
       <Popover
         id={id}
         open={open}
