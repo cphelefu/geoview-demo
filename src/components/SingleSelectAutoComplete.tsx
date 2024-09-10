@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Autocomplete from '@mui/material/Autocomplete';
 import { Box, TextField } from '@mui/material';
 import { ListOptionType } from '../types';
@@ -17,7 +18,7 @@ export default function SingleSelectComplete(props: PillsAutoCompleteProps) {
 
   const { options, value, onChange, label, placeholder,applyGrouping = false } = props;
 
-  const handleOnChange = (event: React.ChangeEvent<{}>, newValue: ListOptionType| null) => {
+  const handleOnChange = (event: React.SyntheticEvent, newValue: ListOptionType| null) => {
     if(newValue === null) {
       onChange?.(null);
       return;

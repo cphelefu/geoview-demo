@@ -48,7 +48,7 @@ function GeoViewMap(props: GeoViewMapProps) {
     if (!isInitialized) {
       initializeMap('sandboxMap3', config, configIsFilePath);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);

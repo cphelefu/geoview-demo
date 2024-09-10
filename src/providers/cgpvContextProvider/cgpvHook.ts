@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -165,7 +166,7 @@ export function useCgpvHook(): ICgpvHook {
       setIsInitialized(true);
       const configJson = typeof config === 'string' ? JSON.parse(config) : config;
       handleCreateMap(mapId, configJson);
-      cgpv.init((mapId: string) => {
+      cgpv.init(() => {
         // write some code ...
         registerEventListeners();
         setIsLoading(false);
@@ -206,7 +207,7 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
-    cgpv.init((mapId: string) => {
+    cgpv.init(() => {
       // write some code ...
     });
     setConfigJson({ ...data });
@@ -262,8 +263,8 @@ export function useCgpvHook(): ICgpvHook {
   const validateConfigJson = (json: string): string | null => {
     try {
       const str = json.replaceAll(`'`, `"`);
-      const configJSON = JSON.parse(str);
-      const validConfig = cgpv.api.config.createMapConfig(str, 'en');
+      //const configJSON = JSON.parse(str);
+      cgpv.api.config.createMapConfig(str, 'en');
     } catch (e: any) {
       return cgpv.api.utilities.core.escapeRegExp(e.message);
     }
@@ -276,6 +277,7 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const updateConfigProperty = (property: string, value: any) => {
+    // eslint-disable-next-line prefer-const
     let newConfig = { ...configJson };
     if (value === undefined) {
       _.unset(newConfig, property);

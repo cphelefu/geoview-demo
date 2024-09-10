@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -21,7 +22,7 @@ export default function PillsAutoComplete(props: PillsAutoCompleteProps) {
 
   const { options, value, onChange, label, placeholder } = props;
 
-  const handleOnChange = (event: React.ChangeEvent<{}>, value: ListOptionType[]) => {
+  const handleOnChange = (event: React.SyntheticEvent, value: ListOptionType[]) => {
     const newValue = value.map((v) => v.value);
     onChange?.(newValue);
   };
