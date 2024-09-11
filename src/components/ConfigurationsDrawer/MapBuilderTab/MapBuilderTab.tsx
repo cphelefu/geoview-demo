@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Button,
@@ -24,26 +25,21 @@ export function MapBuilderTab() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, updateConfigProperty, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading } = cgpvContext;
+  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading } = cgpvContext;
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
-  const [useLiveUpdates, setUseLiveUpdates] = useState<boolean>(false);
 
   const _updateConfigProperty = (property: string, value: any) => {
-    if (useLiveUpdates) {
-      updateConfigProperty(property, value);
-      return;
+    const newConfig = { ...modifiedConfigJson };
+    if (value === undefined) {
+      _.unset(newConfig, property);
     } else {
-      const newConfig = { ...modifiedConfigJson };
-      if (value === undefined) {
-        _.unset(newConfig, property);
-      } else {
-        _.set(newConfig, property, value);
-      }
-      setModifiedConfigJson(newConfig);
-      setIsModified(true);
+      _.set(newConfig, property, value);
     }
+    setModifiedConfigJson(newConfig);
+    setIsModified(true);
+
   }
 
   const getProperty = (property: string, defaultValue = undefined) => {
@@ -78,8 +74,8 @@ export function MapBuilderTab() {
   }
 
 
-  if(isLoading) {
-    return <Box sx={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+  if (isLoading) {
+    return <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
       <CircularProgress />
     </Box>;
   }
