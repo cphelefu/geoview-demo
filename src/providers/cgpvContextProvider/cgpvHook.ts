@@ -6,7 +6,7 @@ import {
   DEFAULT_MAP_WIDTH,
 } from '../../constants';
 import _ from 'lodash';
-import { EventListItemType } from '../../types';
+import { EventListItemType, LegendLayerStatus } from '@/types';
 
 export interface ICgpvHook {
   mapId: string;
@@ -20,6 +20,7 @@ export interface ICgpvHook {
   mapHeight: number;
   setMapHeight: React.Dispatch<React.SetStateAction<number>>;
   eventsList: EventListItemType[];
+  legendLayerStatusList: LegendLayerStatus[];
 
   initializeMap: (mapId: string, config: string | object, configIsFilePath?: boolean) => void;
   handleRemoveMap: () => string;
@@ -42,6 +43,7 @@ export function useCgpvHook(): ICgpvHook {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [eventsList, setEventsList] = useState<EventListItemType[]>([]);
+  const [legendLayerStatusList, setLegendLayerStatusList] = useState<LegendLayerStatus[]>([]);
 
 
   const addEventToList = (eventName: string, description: string) => {
@@ -50,8 +52,19 @@ export function useCgpvHook(): ICgpvHook {
     });
   };
 
-  const registerEventListeners = () => {
+  const registerEventListeners = (mapId: string) => {
     // Events=====================================================================================================================
+    console.log('registering events');
+
+    cgpv.api.maps[mapId].layer.legendsLayerSet.onLayerSetUpdated((sender: any, payload: any) => {
+      const { resultSet } = payload;
+      const resultArr: LegendLayerStatus[] = Object.keys(resultSet).map((key) => {
+        return { layerName: resultSet[key]?.layerName, status: resultSet[key]?.layerStatus };
+      });
+      console.log('resultArr', resultArr);
+      setLegendLayerStatusList(resultArr);
+    });
+
     // listen to layer added event
     cgpv.api.maps[mapId].layer.onLayerAdded((sender: any, payload: any) => {
       addEventToList('onLayerAdded', `layer ${payload.layerPath} added`);
@@ -168,7 +181,7 @@ export function useCgpvHook(): ICgpvHook {
       handleCreateMap(mapId, configJson);
       cgpv.init(() => {
         // write some code ...
-        registerEventListeners();
+        registerEventListeners(mapId);
         setIsLoading(false);
       });
     }
@@ -209,6 +222,8 @@ export function useCgpvHook(): ICgpvHook {
     cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
     cgpv.init(() => {
       // write some code ...
+      console.log('map created----------------------------------------');
+      registerEventListeners(theMapId);
     });
     setConfigJson({ ...data });
     setMapId(theMapId);
@@ -304,6 +319,7 @@ export function useCgpvHook(): ICgpvHook {
     isLoading,
     applyWidthHeight,
     eventsList,
+    legendLayerStatusList,
 
     initializeMap,
     handleRemoveMap,

@@ -11,3 +11,9 @@ export type EventListItemType = {
   description: string;
   status?: string;
 }
+
+
+export type LegendLayerStatus = {
+  layerName: string;
+  status: string;
+}
