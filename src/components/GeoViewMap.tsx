@@ -10,17 +10,18 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { CodeSnippet } from './CodeSnippet';
 import { EventsLog } from './EventsLog';
+import { LegendLayerStatusTable } from './LegendLayerStatusTable';
 
 interface GeoViewMapProps {
   showConfigEditor?: boolean;
   showEventsLog?: boolean;
+  showLegendLayerStatus?: boolean;
   config: string | object;
   configIsFilePath?: boolean;
   codeSnippet?: string;
   children?: React.ReactNode;
   top?: React.ReactNode;
   bottom?: React.ReactNode;
-
 }
 
 function GeoViewMap(props: GeoViewMapProps) {
@@ -35,6 +36,7 @@ function GeoViewMap(props: GeoViewMapProps) {
   const {
     showConfigEditor = true,
     showEventsLog = true,
+    showLegendLayerStatus = true,
     config = DEFAULT_CONFIG,
     configIsFilePath,
     codeSnippet,
@@ -86,6 +88,7 @@ function GeoViewMap(props: GeoViewMapProps) {
             {showConfigEditor && <Tab label="Config Editor" value="config-editor" />}
             {codeSnippet && <Tab label="Code Snippet" value="code-snippet" />}
             {showEventsLog && <Tab label="Events Log" value="events-log" />}
+            {showLegendLayerStatus && <Tab label="Legend Layer Status" value="legend-layer-status" />}
           </Tabs>
         </Box>
         <Box sx={{ display: selectedTab === 'map' ? 'unset' : 'none' }}>
@@ -104,6 +107,11 @@ function GeoViewMap(props: GeoViewMapProps) {
           <EventsLog />
         </Box>
         }
+        {showLegendLayerStatus && <Box sx={{ marginTop: '20px', display: selectedTab === 'legend-layer-status' ? 'unset' : 'none' }}>
+          <LegendLayerStatusTable />
+        </Box>
+        }
+
       </Box>
     );
   };

@@ -28,7 +28,7 @@ export default function SplitButton({ options, label, title, onClick }: SplitBut
     }
   };
 
-  const handleMenuItemClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) => {
+  const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index);
     setOpen(false);
   };
@@ -84,7 +84,7 @@ export default function SplitButton({ options, label, title, onClick }: SplitBut
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
                   {options.map((option, index) => (
-                    <MenuItem key={option} selected={index === selectedIndex} onClick={(event) => handleMenuItemClick(event, index)}>
+                    <MenuItem key={option} selected={index === selectedIndex} onClick={() => handleMenuItemClick(index)}>
                       {option}
                     </MenuItem>
                   ))}
