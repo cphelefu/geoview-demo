@@ -191,6 +191,8 @@ export function useCgpvHook(): ICgpvHook {
   const handleConfigFileChange = async (filePath: string | null) => {
     if (!filePath) return;
     readConfigFile(filePath).then((data) => {
+      setEventsList([]);
+      setLegendLayerStatusList([]);
       handleConfigJsonChange(data);
       setConfigFilePath(filePath);
     });
