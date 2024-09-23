@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { Box, Button } from '@mui/material';
 import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
+import { useSnackbar } from '@/providers/snackbarProvider';
 
 export function ConfigTextEditor() {
   const cgpvContext = useContext(CGPVContext);
@@ -11,6 +12,7 @@ export function ConfigTextEditor() {
   }
 
   const { configJson, validateConfigJson, createMapFromConfigText, handleApplyStateToConfigFile } = cgpvContext;
+  const { enqueueSnackbar } = useSnackbar();
 
   const textEditorRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,10 +42,10 @@ export function ConfigTextEditor() {
   const validateText = () => {
     const results = validateConfigJson(editorText);
     if (results) {
-      alert(results);
+      enqueueSnackbar(results, { variant: 'error' });
       setIsValidJson(false);
     } else {
-      alert('Valid JSON');
+      enqueueSnackbar('JSON is valid', { variant: 'success' });
       setIsValidJson(true);
     }
   };
@@ -80,6 +82,7 @@ export function ConfigTextEditor() {
           rows={30}
           cols={150}
           ref={textEditorRef}
+          spellCheck="false"
         ></textarea>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 2 }}>

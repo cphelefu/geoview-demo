@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { Button, Snackbar } from "@mui/material";
+import { Button } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useSnackbar } from "../providers/snackbarProvider";
 
 interface CopyToClipboardButtonProps {
   textToCopy: string;
 }
 
 export const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
-  const [open, setOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = () => {
-    setOpen(true);
     navigator.clipboard.writeText(props.textToCopy);
+    enqueueSnackbar('Copied to clipboard', { variant: 'success' });
   };
 
   return (
@@ -19,13 +19,6 @@ export const CopyToClipboardButton = (props: CopyToClipboardButtonProps) => {
       <Button size="small" onClick={handleClick} variant="contained" color="primary" startIcon={<ContentCopyIcon />}>
         Copy to Clipboard
       </Button>
-      <Snackbar
-        message="Copied to clibboard"
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={2000}
-        onClose={() => setOpen(false)}
-        open={open}
-      />
     </>
   );
 };
