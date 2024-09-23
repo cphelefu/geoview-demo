@@ -82,6 +82,8 @@ function GeoViewMap(props: GeoViewMapProps) {
   const renderBodyContent = () => {
     return (
       <Box sx={{ width: '100%', typography: 'body1' }}>
+        
+
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={selectedTab} onChange={handleTabChange} aria-label="handling tabs change">
             <Tab label="Map" value="map" />
@@ -92,7 +94,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           </Tabs>
         </Box>
         <Box sx={{ display: selectedTab === 'map' ? 'unset' : 'none' }}>
-          <MapRenderer />
+          <p>Something here</p>
         </Box>
 
         {showConfigEditor && <Box sx={{ marginTop: '20px', display: selectedTab === 'config-editor' ? 'unset' : 'none' }}>
@@ -111,6 +113,9 @@ function GeoViewMap(props: GeoViewMapProps) {
           <LegendLayerStatusTable />
         </Box>
         }
+
+
+      <MapRenderer />
 
       </Box>
     );
@@ -183,7 +188,9 @@ function GeoViewMap(props: GeoViewMapProps) {
         <Toolbar />
         {props.top}
         {children}
-        {renderBodyContent()}
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+          <MapRenderer />
+        </Box>
         {props.bottom}
       </Box>
     </Box>
