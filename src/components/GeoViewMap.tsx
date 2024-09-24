@@ -80,48 +80,6 @@ function GeoViewMap(props: GeoViewMapProps) {
     navigate('/');
   };
 
-  const renderBodyContent = () => {
-    return (
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-        
-
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="handling tabs change">
-            <Tab label="Map" value="map" />
-            {showConfigEditor && <Tab label="Config Editor" value="config-editor" />}
-            {codeSnippet && <Tab label="Code Snippet" value="code-snippet" />}
-            {showEventsLog && <Tab label="Events Log" value="events-log" />}
-            {showLegendLayerStatus && <Tab label="Legend Layer Status" value="legend-layer-status" />}
-          </Tabs>
-        </Box>
-        <Box sx={{ display: selectedTab === 'map' ? 'unset' : 'none' }}>
-          <p>Something here</p>
-        </Box>
-
-        {showConfigEditor && <Box sx={{ marginTop: '20px', display: selectedTab === 'config-editor' ? 'unset' : 'none' }}>
-          <ConfigTextEditor />
-        </Box>
-        }
-        {codeSnippet && <Box sx={{ marginTop: '20px', display: selectedTab === 'code-snippet' ? 'unset' : 'none' }}>
-          <CodeSnippet code={codeSnippet} />
-        </Box>
-        }
-        {showEventsLog && <Box sx={{ marginTop: '20px', display: selectedTab === 'events-log' ? 'unset' : 'none' }}>
-          <EventsLog />
-        </Box>
-        }
-        {showLegendLayerStatus && <Box sx={{ marginTop: '20px', display: selectedTab === 'legend-layer-status' ? 'unset' : 'none' }}>
-          <LegendLayerStatusTable />
-        </Box>
-        }
-
-
-      <MapRenderer />
-
-      </Box>
-    );
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />

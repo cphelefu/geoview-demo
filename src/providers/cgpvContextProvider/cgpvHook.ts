@@ -160,7 +160,7 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const readConfigFile = async (filePath: string) => {
-    const res = await fetch(`./configs/${filePath}`);
+    const res = await fetch(`${filePath}`);
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
