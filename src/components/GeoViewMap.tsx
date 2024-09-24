@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { CodeSnippet } from './CodeSnippet';
 import { EventsLog } from './EventsLog';
 import { LegendLayerStatusTable } from './LegendLayerStatusTable';
+import { AppToolbar } from './AppToolbar';
 
 interface GeoViewMapProps {
   showConfigEditor?: boolean;
@@ -131,7 +132,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <AppToolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -150,10 +151,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Canadian Geospatial Platform (CGP) - GeoView Project
-          </Typography>
-        </Toolbar>
+        </AppToolbar>
       </AppBar>
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="settings panel">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
