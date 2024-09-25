@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
-import { Box, Divider, List, ListItem, ListItemText } from '@mui/material';
+import { Box, List, ListItem, ListItemText } from '@mui/material';
 import { EventListItemType, ListOptionType } from '../types';
 import PillsAutoComplete from './PillsAutoComplete';
 
@@ -50,12 +50,9 @@ export function EventsLog() {
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {logsList.map((row, index) => (
-          <>
-            <ListItem key={`$legend_layer_status_index_${index}`}>
+            <ListItem key={`$eventslog_index_${index}`} sx={{borderBottom: '1px solid rgba(0, 0, 0, 0.12);'}} >
               <ListItemText primary={row.eventName} secondary={row?.description} />
             </ListItem>
-            <Divider component="li" />
-          </>
         ))}
       </List>
     </Box>

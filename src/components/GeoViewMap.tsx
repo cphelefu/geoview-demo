@@ -1,27 +1,21 @@
 import React, { useContext, useEffect } from 'react';
-import { AppBar, Box, CssBaseline, Drawer, IconButton, Tab, Tabs, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ConfigurationDrawer from './ConfigurationsDrawer/ConfigurationsDrawer';
-import { ConfigTextEditor } from './ConfigTextEditor';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { MapRenderer } from './MapRenderer';
 import { DEFAULT_CONFIG } from '../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-import { CodeSnippet } from './CodeSnippet';
-import { EventsLog } from './EventsLog';
-import { LegendLayerStatusTable } from './LegendLayerStatusTable';
 import { AppToolbar } from './AppToolbar';
 
 interface GeoViewMapProps {
   showConfigEditor?: boolean;
-  showEventsLog?: boolean;
-  showLegendLayerStatus?: boolean;
   config: string | object;
   configIsFilePath?: boolean;
-  codeSnippet?: string;
   children?: React.ReactNode;
   top?: React.ReactNode;
+  codeSnippet?: string;
   bottom?: React.ReactNode;
 }
 
@@ -35,12 +29,8 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const { initializeMap, isInitialized } = cgpvContext;
   const {
-    showConfigEditor = true,
-    showEventsLog = true,
-    showLegendLayerStatus = true,
     config = DEFAULT_CONFIG,
     configIsFilePath,
-    codeSnippet,
     children
   } = props;
 
@@ -55,11 +45,6 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState('map');
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setSelectedTab(newValue);
-  };
 
   const handleDrawerClose = () => {
     setIsClosing(true);

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
-import { Box, Divider, List, ListItem, ListItemText } from '@mui/material';
+import { Box, List, ListItem, ListItemText } from '@mui/material';
 
 
 export function LegendLayerStatusTable() {
@@ -19,12 +19,11 @@ export function LegendLayerStatusTable() {
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {legendLayerStatusList.map((row, index) => (
-          <>
-            <ListItem key={`$legend_layer_status_index_${index}`}>
-              <ListItemText primary={row.layerName} secondary={row?.status} />
-            </ListItem>
-            <Divider component="li" />
-          </>
+
+          <ListItem key={`$legend_layer_status_index_${index}`} sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12);' }} >
+            <ListItemText primary={row.layerName} secondary={row?.status} />
+          </ListItem>
+
         ))}
       </List>
     </Box>

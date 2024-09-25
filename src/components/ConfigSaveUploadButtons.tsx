@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
-import { Box, Button, Modal, Snackbar } from "@mui/material";
+import { Box, Button, Snackbar } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CGPVContext } from "../providers/cgpvContextProvider/CGPVContextProvider";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import DataObjectIcon from '@mui/icons-material/DataObject';
 import { ConfigTextEditor } from "./ConfigTextEditor";
 
 interface ConfigSaveUploadButtonsProps {

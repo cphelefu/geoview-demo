@@ -2,7 +2,6 @@ import { IconButton, Link, Menu, MenuItem, Toolbar, Typography } from "@mui/mate
 import { useState } from "react";
 import SettingsIcon from '@mui/icons-material/Settings';
 import Logo from '../assets/logo.png';
-import GitHubIcon from '@mui/icons-material/GitHub';
 
 interface AppToolbarProps {
   children?: React.ReactNode;
