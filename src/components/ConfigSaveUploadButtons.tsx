@@ -2,8 +2,9 @@ import { useContext, useState } from "react";
 import { Box, Button, Snackbar } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CGPVContext } from "../providers/cgpvContextProvider/CGPVContextProvider";
-import SaveIcon from '@mui/icons-material/Save';
+import DownloadIcon from '@mui/icons-material/Download';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { ConfigTextEditor } from "./ConfigTextEditor";
 
 interface ConfigSaveUploadButtonsProps {
   showCopy?: boolean;
@@ -78,13 +79,14 @@ export const ConfigSaveUploadButtons = (props: ConfigSaveUploadButtonsProps) => 
         {showCopy && <Button onClick={handleCopy} variant="contained" color="primary" size="small" startIcon={<ContentCopyIcon />}>
           Copy to Clipboard
         </Button>}
-        {showDownload && <Button onClick={handleDownload} variant="contained" color="primary"  size="small" startIcon={<SaveIcon />}>
+        {showDownload && <Button onClick={handleDownload} variant="contained" color="primary"  size="small" startIcon={<DownloadIcon />}>
           Save
         </Button>}
         {showUpload && <Button component="label" variant="contained" color="primary"  size="small" startIcon={<UploadFileIcon/>}>
-          Upload Config File
+          Upload
           <input type="file" accept=".json" hidden onChange={handleUpload} /> 
         </Button>}
+        <ConfigTextEditor />
       </Box>
       <Snackbar
         message={msg}

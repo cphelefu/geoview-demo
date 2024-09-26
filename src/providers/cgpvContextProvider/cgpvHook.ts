@@ -57,6 +57,7 @@ export function useCgpvHook(): ICgpvHook {
     console.log('registering events');
 
     cgpv.api.maps[mapId].layer.legendsLayerSet.onLayerSetUpdated((sender: any, payload: any) => {
+      console.log('legendsLayerSet updated', payload);
       const { resultSet } = payload;
       const resultArr: LegendLayerStatus[] = Object.keys(resultSet).map((key) => {
         return { layerName: resultSet[key]?.layerName, status: resultSet[key]?.layerStatus };
@@ -160,7 +161,7 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const readConfigFile = async (filePath: string) => {
-    const res = await fetch(`./configs/${filePath}`);
+    const res = await fetch(`${filePath}`);
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
@@ -191,6 +192,8 @@ export function useCgpvHook(): ICgpvHook {
   const handleConfigFileChange = async (filePath: string | null) => {
     if (!filePath) return;
     readConfigFile(filePath).then((data) => {
+      setEventsList([]);
+      setLegendLayerStatusList([]);
       handleConfigJsonChange(data);
       setConfigFilePath(filePath);
     });

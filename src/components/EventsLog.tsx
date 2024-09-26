@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, List, ListItem, ListItemText } from '@mui/material';
 import { EventListItemType, ListOptionType } from '../types';
 import PillsAutoComplete from './PillsAutoComplete';
 
@@ -36,7 +36,7 @@ export function EventsLog() {
 
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <h2>Events Log</h2>
 
       <Box sx={{ maxwidth: '450px', mb: 3 }}>
@@ -47,31 +47,14 @@ export function EventsLog() {
           label="Filter by eventName" placeholder="" />
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 550 }} aria-label="simple table">
-          <TableHead sx={{ fontWeight: 'bold' }}>
-            <TableRow>
-              <TableCell>Event Name</TableCell>
-              <TableCell>Details</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {logsList.map((row, index) => (
-              <TableRow
-                key={`${row.eventName}${index}`}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.eventName}
-                </TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row?.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        {logsList.map((row, index) => (
+            <ListItem key={`$eventslog_index_${index}`} sx={{borderBottom: '1px solid rgba(0, 0, 0, 0.12);'}} >
+              <ListItemText primary={row.eventName} secondary={row?.description} />
+            </ListItem>
+        ))}
+      </List>
     </Box>
   );
 

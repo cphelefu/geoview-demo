@@ -1,26 +1,21 @@
 import React, { useContext, useEffect } from 'react';
-import { AppBar, Box, CssBaseline, Drawer, IconButton, Tab, Tabs, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ConfigurationDrawer from './ConfigurationsDrawer/ConfigurationsDrawer';
-import { ConfigTextEditor } from './ConfigTextEditor';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { MapRenderer } from './MapRenderer';
 import { DEFAULT_CONFIG } from '../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-import { CodeSnippet } from './CodeSnippet';
-import { EventsLog } from './EventsLog';
-import { LegendLayerStatusTable } from './LegendLayerStatusTable';
+import { AppToolbar } from './AppToolbar';
 
 interface GeoViewMapProps {
   showConfigEditor?: boolean;
-  showEventsLog?: boolean;
-  showLegendLayerStatus?: boolean;
   config: string | object;
   configIsFilePath?: boolean;
-  codeSnippet?: string;
   children?: React.ReactNode;
   top?: React.ReactNode;
+  codeSnippet?: string;
   bottom?: React.ReactNode;
 }
 
@@ -34,12 +29,8 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const { initializeMap, isInitialized } = cgpvContext;
   const {
-    showConfigEditor = true,
-    showEventsLog = true,
-    showLegendLayerStatus = true,
     config = DEFAULT_CONFIG,
     configIsFilePath,
-    codeSnippet,
     children
   } = props;
 
@@ -54,11 +45,6 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState('map');
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setSelectedTab(newValue);
-  };
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -79,43 +65,6 @@ function GeoViewMap(props: GeoViewMapProps) {
     navigate('/');
   };
 
-  const renderBodyContent = () => {
-    return (
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="handling tabs change">
-            <Tab label="Map" value="map" />
-            {showConfigEditor && <Tab label="Config Editor" value="config-editor" />}
-            {codeSnippet && <Tab label="Code Snippet" value="code-snippet" />}
-            {showEventsLog && <Tab label="Events Log" value="events-log" />}
-            {showLegendLayerStatus && <Tab label="Legend Layer Status" value="legend-layer-status" />}
-          </Tabs>
-        </Box>
-        <Box sx={{ display: selectedTab === 'map' ? 'unset' : 'none' }}>
-          <MapRenderer />
-        </Box>
-
-        {showConfigEditor && <Box sx={{ marginTop: '20px', display: selectedTab === 'config-editor' ? 'unset' : 'none' }}>
-          <ConfigTextEditor />
-        </Box>
-        }
-        {codeSnippet && <Box sx={{ marginTop: '20px', display: selectedTab === 'code-snippet' ? 'unset' : 'none' }}>
-          <CodeSnippet code={codeSnippet} />
-        </Box>
-        }
-        {showEventsLog && <Box sx={{ marginTop: '20px', display: selectedTab === 'events-log' ? 'unset' : 'none' }}>
-          <EventsLog />
-        </Box>
-        }
-        {showLegendLayerStatus && <Box sx={{ marginTop: '20px', display: selectedTab === 'legend-layer-status' ? 'unset' : 'none' }}>
-          <LegendLayerStatusTable />
-        </Box>
-        }
-
-      </Box>
-    );
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -126,7 +75,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <AppToolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -145,10 +94,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Canadian Geospatial Platform (CGP) - GeoView Project
-          </Typography>
-        </Toolbar>
+        </AppToolbar>
       </AppBar>
       <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="settings panel">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -183,7 +129,9 @@ function GeoViewMap(props: GeoViewMapProps) {
         <Toolbar />
         {props.top}
         {children}
-        {renderBodyContent()}
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+          <MapRenderer />
+        </Box>
         {props.bottom}
       </Box>
     </Box>
