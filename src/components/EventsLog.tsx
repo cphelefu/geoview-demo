@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
-import { Box, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Button, List, ListItem, ListItemText } from '@mui/material';
 import { EventListItemType, ListOptionType } from '../types';
 import PillsAutoComplete from './PillsAutoComplete';
 
@@ -11,7 +11,7 @@ export function EventsLog() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { eventsList } = cgpvContext;
+  const { eventsList, clearEventsList } = cgpvContext;
 
   const [logsList, setLogsList] = useState<EventListItemType[]>(eventsList);
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
@@ -39,13 +39,15 @@ export function EventsLog() {
     <Box>
       <h2>Events Log</h2>
 
-      <Box sx={{ maxwidth: '450px', mb: 3 }}>
+      <Box sx={{ maxwidth: '450px', mb: 1 }}>
         <PillsAutoComplete
           value={selectedEventTypes}
           onChange={(value) => setSelectedEventTypes(value)}
           options={eventTypeOptions}
           label="Filter by eventName" placeholder="" />
       </Box>
+
+      <Button size="small" variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
 
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>

@@ -4,8 +4,8 @@ import { ListOptionType } from './types';
 export const DEFAULT_DISPLAY_LANGUAGE = 'en';
 export const DEFAULT_DISPLAY_THEME = 'geo.ca';
 export const DEFAULT_DISPLAY_PROJECTION = 3978;
-export const DEFAULT_MAP_WIDTH = 800;
-export const DEFAULT_MAP_HEIGHT = 600;
+export const DEFAULT_MAP_WIDTH = '100%';
+export const DEFAULT_MAP_HEIGHT = '800px';
 
 export const DEFAULT_CONFIG = {
   map: {
@@ -48,7 +48,7 @@ export const DEFAULT_CONFIG = {
   theme: 'geo.ca',
 };
 
-const URL_TO_CONFIGS = 'https://canadian-geospatial-platform.github.io/geoview-demo/configs/';
+const URL_TO_CONFIGS = 'https://canadian-geospatial-platform.github.io/geoview/configs/';
 //`https://cphelefu.github.io/geoview/configs/`;
 
 export const CONFIG_FILES_LIST: ListOptionType[] = [

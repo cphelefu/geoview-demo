@@ -8,6 +8,7 @@ import {
   FormGroup,
   FormLabel,
   Switch,
+  TextField,
 } from '@mui/material';
 import { useContext, useState } from 'react';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
@@ -25,7 +26,7 @@ export function MapBuilderTab() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading } = cgpvContext;
+  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading, setMapWidth, setMapHeight, mapHeight, mapWidth } = cgpvContext;
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -114,6 +115,34 @@ export function MapBuilderTab() {
           value={getProperty('map.interaction')}
           onChange={(value) => updateProperty('map.interaction', value)}
           label="Map Interaction" placeholder="" />
+
+
+        <FormGroup aria-label="position">
+          <FormLabel component="legend">Map Size</FormLabel>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-width" 
+                label="Width"
+                value={mapWidth}
+                onChange={(event) => setMapWidth(event.target.value)}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-height" 
+                label="Height"
+                value={mapHeight}
+                onChange={(event) => setMapHeight(event.target.value)}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+          </Box>
+        </FormGroup>
 
 
         <FormGroup aria-label="position">

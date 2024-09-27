@@ -14,11 +14,10 @@ export interface ICgpvHook {
   isLoading: boolean;
   configFilePath: string;
   configJson: object;
-  mapWidth: number;
-  applyWidthHeight: boolean;
-  setMapWidth: React.Dispatch<React.SetStateAction<number>>;
-  mapHeight: number;
-  setMapHeight: React.Dispatch<React.SetStateAction<number>>;
+  mapWidth: string;
+  setMapWidth: React.Dispatch<React.SetStateAction<string>>;
+  mapHeight: string;
+  setMapHeight: React.Dispatch<React.SetStateAction<string>>;
   eventsList: EventListItemType[];
   legendLayerStatusList: LegendLayerStatus[];
 
@@ -26,18 +25,17 @@ export interface ICgpvHook {
   handleRemoveMap: () => string;
   handleConfigFileChange: (filePath: string | null) => void;
   handleConfigJsonChange: (data: any) => void;
-  handleApplyWidthHeight: (val: boolean) => void;
   validateConfigJson: (json: string) => string | null;
   createMapFromConfigText: (configText: string) => void;
   updateConfigProperty: (property: string, value: any) => void;
   handleApplyStateToConfigFile: () => void;
+  clearEventsList: () => void;
 }
 
 export function useCgpvHook(): ICgpvHook {
   const [mapId, setMapId] = useState<string>('sandboxMap3');
-  const [applyWidthHeight, setApplyWidthHeight] = useState<boolean>(false);
-  const [mapWidth, setMapWidth] = useState<number>(DEFAULT_MAP_WIDTH);
-  const [mapHeight, setMapHeight] = useState<number>(DEFAULT_MAP_HEIGHT);
+  const [mapWidth, setMapWidth] = useState<string>(DEFAULT_MAP_WIDTH);
+  const [mapHeight, setMapHeight] = useState<string>(DEFAULT_MAP_HEIGHT);
   const [configFilePath, setConfigFilePath] = useState<string>('');
   const [configJson, setConfigJson] = useState<object>({});
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -218,9 +216,9 @@ export function useCgpvHook(): ICgpvHook {
 
   const handleCreateMap = (theMapId: string, data: any) => {
     const mapDiv = document.getElementById(theMapId);
-    if (applyWidthHeight) {
-      mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-    }
+    
+    mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
+    
 
     cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
     cgpv.init(() => {
@@ -236,13 +234,15 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   //deletes old map and creates a new map
-  const reCreateMap = () => {
+  /*const reCreateMap = () => {
     const newMapId = handleRemoveMap();
     setTimeout(() => {
       //waiting for states that were prior to this function to update
       const mapDiv = document.getElementById(newMapId);
       if (applyWidthHeight) {
         mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
+      } else {
+        mapDiv?.setAttribute('style', `width: 100%; height: 100%;`);
       }
 
       cgpv.api.createMapFromConfig(newMapId, JSON.stringify(configJson));
@@ -250,18 +250,12 @@ export function useCgpvHook(): ICgpvHook {
     setMapId(newMapId);
   };
 
-  const handleApplyWidthHeight = (val: boolean) => {
-    setApplyWidthHeight(val);
-    reCreateMap();
-  }
-
-  /*
-  const onHeightChange = (newHeight: number) => {
+  const onHeightChange = (newHeight: string) => {
     setMapHeight(newHeight);
     reCreateMap();
   };
 
-  const onWidthChange = (newWidth: number) => {
+  const onWidthChange = (newWidth: string) => {
     setMapWidth(newWidth);
     reCreateMap();
   };*/
@@ -310,6 +304,10 @@ export function useCgpvHook(): ICgpvHook {
     handleConfigJsonChange(state);
   }
 
+  const clearEventsList = () => {
+    setEventsList([]);
+  }
+
   return {
     mapId,
     configFilePath,
@@ -320,7 +318,6 @@ export function useCgpvHook(): ICgpvHook {
     setMapHeight,
     isInitialized,
     isLoading,
-    applyWidthHeight,
     eventsList,
     legendLayerStatusList,
 
@@ -329,9 +326,9 @@ export function useCgpvHook(): ICgpvHook {
     handleConfigFileChange,
     handleConfigJsonChange,
     validateConfigJson,
-    handleApplyWidthHeight,
     createMapFromConfigText,
     updateConfigProperty,
-    handleApplyStateToConfigFile
+    handleApplyStateToConfigFile,
+    clearEventsList
   };
 }
