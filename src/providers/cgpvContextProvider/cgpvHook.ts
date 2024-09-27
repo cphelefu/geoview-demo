@@ -14,10 +14,6 @@ export interface ICgpvHook {
   isLoading: boolean;
   configFilePath: string;
   configJson: object;
-  mapWidth: string;
-  setMapWidth: React.Dispatch<React.SetStateAction<string>>;
-  mapHeight: string;
-  setMapHeight: React.Dispatch<React.SetStateAction<string>>;
   eventsList: EventListItemType[];
   legendLayerStatusList: LegendLayerStatus[];
 
@@ -34,8 +30,6 @@ export interface ICgpvHook {
 
 export function useCgpvHook(): ICgpvHook {
   const [mapId, setMapId] = useState<string>('sandboxMap3');
-  const [mapWidth, setMapWidth] = useState<string>(DEFAULT_MAP_WIDTH);
-  const [mapHeight, setMapHeight] = useState<string>(DEFAULT_MAP_HEIGHT);
   const [configFilePath, setConfigFilePath] = useState<string>('');
   const [configJson, setConfigJson] = useState<object>({});
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -217,16 +211,25 @@ export function useCgpvHook(): ICgpvHook {
   const handleCreateMap = (theMapId: string, data: any) => {
     const mapDiv = document.getElementById(theMapId);
     
-    mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-    
+    // mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
+    // embedding heght and width in the config
+    let configData = { ...data };
+    if(_.get(configData, 'mapDimensions.width') === undefined) {
+      _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
+    }
+    if(_.get(configData, 'mapDimensions.height') === undefined) {
+      _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
+    }
 
-    cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
+    
+    setConfigJson(configData);
+    cgpv.api.createMapFromConfig(theMapId, JSON.stringify(configData));
     cgpv.init(() => {
       // write some code ...
       console.log('map created----------------------------------------');
       registerEventListeners(theMapId);
     });
-    setConfigJson({ ...data });
+    
     setMapId(theMapId);
     setTimeout(() => {
       setIsLoading(false);
@@ -312,10 +315,6 @@ export function useCgpvHook(): ICgpvHook {
     mapId,
     configFilePath,
     configJson,
-    mapWidth,
-    setMapWidth,
-    mapHeight,
-    setMapHeight,
     isInitialized,
     isLoading,
     eventsList,

@@ -26,7 +26,7 @@ export function MapBuilderTab() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading, setMapWidth, setMapHeight, mapHeight, mapWidth } = cgpvContext;
+  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading } = cgpvContext;
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -126,8 +126,8 @@ export function MapBuilderTab() {
                 size="small"
                 id="map-width" 
                 label="Width"
-                value={mapWidth}
-                onChange={(event) => setMapWidth(event.target.value)}
+                defaultValue={getProperty('mapDimensions.width')}
+                onChange={(event) => updateProperty('mapDimensions.width', event.target.value)}
                 helperText="e.g. 100% or 500px"
                 variant="outlined" />
             </FormControl>
@@ -136,8 +136,8 @@ export function MapBuilderTab() {
                 size="small"
                 id="map-height" 
                 label="Height"
-                value={mapHeight}
-                onChange={(event) => setMapHeight(event.target.value)}
+                defaultValue={getProperty('mapDimensions.height')}
+                onChange={(event) => updateProperty('mapDimensions.height', event.target.value)}
                 helperText="e.g. 100% or 500px"
                 variant="outlined" />
             </FormControl>
