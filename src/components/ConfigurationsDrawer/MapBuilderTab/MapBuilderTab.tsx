@@ -9,17 +9,19 @@ import {
   FormLabel,
   Switch,
 } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 import _ from 'lodash';
 import PillsAutoComplete from '../../PillsAutoComplete';
 import { componentsOptions, footerTabslist, navBarOptions, appBarOptions, mapInteractionOptions, mapProjectionOptions, zoomOptions, themeOptions, CONFIG_FILES_LIST, corePackagesOptions } from '@/constants';
 import SingleSelectComplete from '../../SingleSelectAutoComplete';
 import { ConfigSaveUploadButtons } from '../../ConfigSaveUploadButtons';
+import { useSearchParams } from "react-router-dom";
 
 
 export function MapBuilderTab() {
   const cgpvContext = useContext(CGPVContext);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!cgpvContext) {
     throw new Error('CGPVContent must be used within a CGPVProvider');
@@ -29,6 +31,17 @@ export function MapBuilderTab() {
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
+
+  useEffect(() => {
+    const config = searchParams.get('config');
+    if (config) {
+      handleConfigFileChange(config);
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onConfigFileChanged = (value: string) => {
+    setSearchParams({ config: value });
+  }
 
   const _updateConfigProperty = (property: string, value: any) => {
     const newConfig = { ...modifiedConfigJson };
@@ -100,7 +113,7 @@ export function MapBuilderTab() {
           options={CONFIG_FILES_LIST}
           value={configFilePath}
           applyGrouping={true}
-          onChange={(value) => handleConfigFileChange(value)}
+          onChange={(value) => onConfigFileChanged(value)}
           label="Select Configuration File" placeholder="" />
 
         <SingleSelectComplete

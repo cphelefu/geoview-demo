@@ -39,7 +39,8 @@ function GeoViewMap(props: GeoViewMapProps) {
   //when component is mounted, initialize the map
   useEffect(() => {
     if (!isInitialized) {
-      initializeMap('sandboxMap3', config, configIsFilePath);
+      console.log('iitializing*************************');
+      initializeMap(config, configIsFilePath);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
