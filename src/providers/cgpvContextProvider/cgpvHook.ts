@@ -17,8 +17,7 @@ export interface ICgpvHook {
   eventsList: EventListItemType[];
   legendLayerStatusList: LegendLayerStatus[];
 
-  initializeMap: (mapId: string, config: string | object, configIsFilePath?: boolean) => void;
-  handleRemoveMap: () => string;
+  initializeMap: (config: string | object, configIsFilePath?: boolean) => void;
   handleConfigFileChange: (filePath: string | null) => void;
   handleConfigJsonChange: (data: any) => void;
   validateConfigJson: (json: string) => string | null;
@@ -160,60 +159,59 @@ export function useCgpvHook(): ICgpvHook {
     return res.json();
   }
 
-  const initializeMap = (mapId: string, config: string | object, configIsFilePath = false) => {
+  const initializeMap = (config: string | object, configIsFilePath = false) => {
     if (isInitialized) return;
-    setIsLoading(true);
-    if (configIsFilePath) {
-      readConfigFile(config as string).then((data) => {
-        console.log('i fetch a file ', data);
-        initializeMap(mapId, data);
-      });
-    } else {
-      setIsInitialized(true);
-      const configJson = typeof config === 'string' ? JSON.parse(config) : config;
-      handleCreateMap(mapId, configJson);
-      cgpv.init(() => {
-        // write some code ...
-        registerEventListeners(mapId);
-        setIsLoading(false);
-      });
-    }
+    setIsInitialized(true);
+    createNewMap(config, configIsFilePath);
   };
 
-
-  const handleConfigFileChange = async (filePath: string | null) => {
-    if (!filePath) return;
-    readConfigFile(filePath).then((data) => {
-      setEventsList([]);
-      setLegendLayerStatusList([]);
-      handleConfigJsonChange(data);
-      setConfigFilePath(filePath);
-    });
-  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //removes map and creates a new map
-  const handleRemoveMap = (): string => {
+  const createNewMap = (config: string | object, configIsFilePath = false) => {
     cgpv.api.maps[mapId]?.remove(true);
-
     const newMapId = 'sandboxMap_' + uuidv4();
+
     // replace div with id 'sandboxMap' with another div
     const mapContainerDiv = document.getElementById('sandboxMapContainer');
+    if(!mapContainerDiv) {
+      throw new Error('Element with id sandboxMapContainer not found');
+    }
+
+    mapContainerDiv.innerHTML = '';
     const newDiv = document.createElement('div');
     newDiv.id = newMapId;
     newDiv.className = 'geoview-map2';
     mapContainerDiv?.appendChild(newDiv);
     setMapId(newMapId);
-
-    return newMapId;
+    
+    setTimeout(() => {
+      renderNewMap(newMapId, config, configIsFilePath);
+    }, 1500);
   };
 
+  const renderNewMap = async (mapId: string, config: string | object, configIsFilePath = false) => {
+    setEventsList([]);
+    setLegendLayerStatusList([]);
 
-  const handleCreateMap = (theMapId: string, data: any) => {
-    const mapDiv = document.getElementById(theMapId);
+    const mapElement = document.getElementById(mapId);
+    if (!mapElement) {
+      return;
+      //throw new Error(`Element with id ${mapId} not found`);
+    }
+
+    let configTxt = config;
+    if(typeof config !== 'string' && !configIsFilePath) {
+      configTxt = JSON.stringify(config);
+    }
     
-    // mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-    // embedding heght and width in the config
-    let configData = { ...data };
+    if(configIsFilePath) {
+      setConfigFilePath(config as string);
+      const res = await readConfigFile(config as string);
+      configTxt = JSON.stringify(res)
+    }
+
+    let configData = JSON.parse(configTxt as string);
     if(_.get(configData, 'mapDimensions.width') === undefined) {
       _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
     }
@@ -221,58 +219,31 @@ export function useCgpvHook(): ICgpvHook {
       _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
     }
 
+    //we have json; now lets start
+    //setIsLoading(true);
+
+    cgpv.api.createMapFromConfig(mapId, configTxt);
     
-    setConfigJson(configData);
-    cgpv.api.createMapFromConfig(theMapId, JSON.stringify(configData));
     cgpv.init(() => {
-      // write some code ...
-      console.log('map created----------------------------------------');
-      registerEventListeners(theMapId);
+      registerEventListeners(mapId);
+      setConfigJson({ ...configData });
+      setTimeout(() => { // just a delay for animation purposes
+        setIsLoading(false);
+      }, 1500);
     });
-    
-    setMapId(theMapId);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
   };
 
-  //deletes old map and creates a new map
-  /*const reCreateMap = () => {
-    const newMapId = handleRemoveMap();
-    setTimeout(() => {
-      //waiting for states that were prior to this function to update
-      const mapDiv = document.getElementById(newMapId);
-      if (applyWidthHeight) {
-        mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-      } else {
-        mapDiv?.setAttribute('style', `width: 100%; height: 100%;`);
-      }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      cgpv.api.createMapFromConfig(newMapId, JSON.stringify(configJson));
-    }, 500);
-    setMapId(newMapId);
+  const handleConfigFileChange = async (filePath: string | null) => {
+    if (!filePath) return;
+    createNewMap(filePath, true);
   };
-
-  const onHeightChange = (newHeight: string) => {
-    setMapHeight(newHeight);
-    reCreateMap();
-  };
-
-  const onWidthChange = (newWidth: string) => {
-    setMapWidth(newWidth);
-    reCreateMap();
-  };*/
 
   //when config settings changes recreate map
   const handleConfigJsonChange = (data: any) => {
     // pre-select theme and projection from config file
-    setIsLoading(true);
-
-    const newMapId = handleRemoveMap();
-    setTimeout(() => {
-      // create map
-      handleCreateMap(newMapId, data);
-    }, 1500);
+    createNewMap(data, false);
   };
 
   const validateConfigJson = (json: string): string | null => {
@@ -321,7 +292,6 @@ export function useCgpvHook(): ICgpvHook {
     legendLayerStatusList,
 
     initializeMap,
-    handleRemoveMap,
     handleConfigFileChange,
     handleConfigJsonChange,
     validateConfigJson,
