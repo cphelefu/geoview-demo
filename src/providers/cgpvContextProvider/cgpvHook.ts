@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   DEFAULT_MAP_HEIGHT,
   DEFAULT_MAP_WIDTH,
+  URL_TO_CONFIGS,
 } from '../../constants';
 import _ from 'lodash';
 import { EventListItemType, LegendLayerStatus } from '@/types';
@@ -110,37 +111,37 @@ export function useCgpvHook(): ICgpvHook {
     */
 
     // listen to layer item visibility changed event (any layers)
-    cgpv.api.maps[mapId].layer.onLayerVisibilityToggled((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].layer.onLayerVisibilityToggled((sender: any, payload: any) => {
       addEventToList('onLayerVisibilityToggled', `layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
     });
 
     // listen to layer item visibility changed event (any layers)
-    cgpv.api.maps[mapId].layer.onLayerItemVisibilityToggled((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].layer.onLayerItemVisibilityToggled((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `${payload.itemName} on layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
     });
 
     // listen to map zoom event
-    cgpv.api.maps[mapId].onMapZoomEnd((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapZoomEnd((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `Zoomed to level ${payload.zoom}`);
     });
 
     // listen to map move event
-    cgpv.api.maps[mapId].onMapMoveEnd((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapMoveEnd((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `Map moved to center latitude ${payload.lnglat[1]} and longitude ${payload.lnglat[0]}`);
     });
 
     // listen to map language changed event
-    cgpv.api.maps[mapId].onMapLanguageChanged((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapLanguageChanged((sender: any, payload: any) => {
       addEventToList('onMapLanguageChanged', `Map language changed to ${payload.language}`);
     });
 
     // listen to basemap changed event
-    cgpv.api.maps[mapId].basemap.onBasemapChanged((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].basemap.onBasemapChanged((sender: any, payload: any) => {
       addEventToList('onBasemapChanged', `Basemap changed to ${payload.basemap.basemapId}`);
     });
 
     // listen to layer reordered event
-    cgpv.api.maps[mapId].stateApi.onLayersReordered((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].stateApi.onLayersReordered((sender: any, payload: any) => {
       addEventToList('onLayersReordered', `Layers reordered to ${payload.orderedLayers.map((layer: any) => layer.layerPath)}`);
     });
 
@@ -152,7 +153,7 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const readConfigFile = async (filePath: string) => {
-    const res = await fetch(`${filePath}`);
+    const res = await fetch(`${URL_TO_CONFIGS}${filePath}`);
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
@@ -174,7 +175,7 @@ export function useCgpvHook(): ICgpvHook {
 
     // replace div with id 'sandboxMap' with another div
     const mapContainerDiv = document.getElementById('sandboxMapContainer');
-    if(!mapContainerDiv) {
+    if (!mapContainerDiv) {
       throw new Error('Element with id sandboxMapContainer not found');
     }
 
@@ -184,7 +185,7 @@ export function useCgpvHook(): ICgpvHook {
     newDiv.className = 'geoview-map2';
     mapContainerDiv?.appendChild(newDiv);
     setMapId(newMapId);
-    
+
     setTimeout(() => {
       renderNewMap(newMapId, config, configIsFilePath);
     }, 1500);
@@ -201,35 +202,42 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     let configTxt = config;
-    if(typeof config !== 'string' && !configIsFilePath) {
+    if (typeof config !== 'string' && !configIsFilePath) {
       configTxt = JSON.stringify(config);
     }
-    
-    if(configIsFilePath) {
+
+    if (configIsFilePath) {
       setConfigFilePath(config as string);
       const res = await readConfigFile(config as string);
       configTxt = JSON.stringify(res)
     }
 
     let configData = JSON.parse(configTxt as string);
-    if(_.get(configData, 'mapDimensions.width') === undefined) {
+    if (_.get(configData, 'mapDimensions.width') === undefined) {
       _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
     }
-    if(_.get(configData, 'mapDimensions.height') === undefined) {
+    if (_.get(configData, 'mapDimensions.height') === undefined) {
       _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
     }
+    
+
+    // setting dimensions of the map
+    mapElement?.setAttribute('style', `width: ${_.get(configData, 'mapDimensions.width')}; height: ${_.get(configData, 'mapDimensions.height')}`);
 
     //we have json; now lets start
-    //setIsLoading(true);
+    setIsLoading(true);
 
+    setConfigJson({ ...configData });
     cgpv.api.createMapFromConfig(mapId, configTxt);
+    console.log('map created... initializing', configData);
     
-    cgpv.init(() => {
-      registerEventListeners(mapId);
-      setConfigJson({ ...configData });
       setTimeout(() => { // just a delay for animation purposes
         setIsLoading(false);
-      }, 1500);
+      }, 2500);
+    cgpv.init(async () => {
+      console.log('map created... initializing');
+      registerEventListeners(mapId);
+      
     });
   };
 

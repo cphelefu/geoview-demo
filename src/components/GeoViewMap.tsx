@@ -4,7 +4,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ConfigurationDrawer from './ConfigurationsDrawer/ConfigurationsDrawer';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { MapRenderer } from './MapRenderer';
-import { DEFAULT_CONFIG } from '../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { AppToolbar } from './AppToolbar';
@@ -29,7 +28,7 @@ function GeoViewMap(props: GeoViewMapProps) {
 
   const { initializeMap, isInitialized } = cgpvContext;
   const {
-    config = DEFAULT_CONFIG,
+    config,
     configIsFilePath,
     children
   } = props;
