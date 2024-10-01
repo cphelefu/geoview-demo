@@ -201,24 +201,25 @@ export function useCgpvHook(): ICgpvHook {
       //throw new Error(`Element with id ${mapId} not found`);
     }
 
-    let configTxt = config;
+    let configTxt = '';
+    let configData = {};
     if (typeof config !== 'string' && !configIsFilePath) {
       configTxt = JSON.stringify(config);
+      configData = JSON.parse(configTxt as string);
     }
 
     if (configIsFilePath) {
       const res = await readConfigFile(config as string);
+      configData = res;
       configTxt = JSON.stringify(res)
     }
 
-    let configData = JSON.parse(configTxt as string);
     if (_.get(configData, 'mapDimensions.width') === undefined) {
       _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
     }
     if (_.get(configData, 'mapDimensions.height') === undefined) {
       _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
     }
-    
 
     // setting dimensions of the map
     mapElement?.setAttribute('style', `width: ${_.get(configData, 'mapDimensions.width')}; height: ${_.get(configData, 'mapDimensions.height')}`);
@@ -231,16 +232,18 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     setConfigJson({ ...configData });
-    cgpv.api.createMapFromConfig(mapId, configTxt);
-    console.log('map created... initializing', configData);
-    
-      setTimeout(() => { // just a delay for animation purposes
-        setIsLoading(false);
-      }, 2500);
+    if (configIsFilePath) {
+      cgpv.api.createMapFromConfig(mapId, `${URL_TO_CONFIGS}${config}`, 800); // just use file directly if its a file path
+    } else {
+      cgpv.api.createMapFromConfig(mapId, configData);
+    }
+
+    setTimeout(() => { // just a delay for animation purposes
+      setIsLoading(false);
+    }, 2500);
     cgpv.init(async () => {
-      console.log('map created... initializing');
       registerEventListeners(mapId);
-      
+
     });
   };
 
