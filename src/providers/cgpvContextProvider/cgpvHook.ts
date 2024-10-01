@@ -153,7 +153,7 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const readConfigFile = async (filePath: string) => {
-    const res = await fetch(`${URL_TO_CONFIGS}${filePath}`);
+    const res = await fetch(`${URL_TO_CONFIGS}${filePath}`, { mode: 'cors' });
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
@@ -207,7 +207,6 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     if (configIsFilePath) {
-      setConfigFilePath(config as string);
       const res = await readConfigFile(config as string);
       configTxt = JSON.stringify(res)
     }
@@ -226,6 +225,10 @@ export function useCgpvHook(): ICgpvHook {
 
     //we have json; now lets start
     setIsLoading(true);
+
+    if (configIsFilePath) {
+      setConfigFilePath(config as string);
+    }
 
     setConfigJson({ ...configData });
     cgpv.api.createMapFromConfig(mapId, configTxt);

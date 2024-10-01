@@ -49,8 +49,9 @@ export const DEFAULT_CONFIG = {
   theme: 'geo.ca',
 };
 
-export const URL_TO_CONFIGS = 'https://canadian-geospatial-platform.github.io/geoview/configs/navigator/';
-//`https://cphelefu.github.io/geoview/configs/`;
+export const GEOVIEW_CORE_URL = 'https://canadian-geospatial-platform.github.io/geoview/';
+export const URL_TO_CONFIGS = `${GEOVIEW_CORE_URL}/configs/navigator/`;
+
 
 export const CONFIG_FILES_LIST: ListOptionType[] = [
   { value: `01-basemap-LCC-TLS.json`, title: 'Basemap LCC Transport-Labeled-Shaded', group: 'Basemaps' },

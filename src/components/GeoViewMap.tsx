@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import ConfigurationDrawer from './ConfigurationsDrawer/ConfigurationsDrawer';
+import DrawerTabs from './DrawerTabs';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { MapRenderer } from './MapRenderer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -111,7 +111,7 @@ function GeoViewMap(props: GeoViewMapProps) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          <ConfigurationDrawer />
+          <DrawerTabs />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -121,7 +121,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           }}
           open
         >
-          <ConfigurationDrawer />
+          <DrawerTabs />
         </Drawer>
       </Box>
       <Box component="main" sx={{ flexGrow: 1, pt: 1, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>

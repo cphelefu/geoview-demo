@@ -6,13 +6,13 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import BallotIcon from '@mui/icons-material/Ballot';
 import RunCircleIcon from '@mui/icons-material/RunCircle';
 import ApiFunctionsTab from './ApiFunctionsTab/ApiFunctionsTab';
-import { MapBuilderTab } from './MapBuilderTab/MapBuilderTab';
-import { EventsLog } from '../EventsLog';
-import { LegendLayerStatusTable } from '../LegendLayerStatusTable';
+import { MapBuilder } from './MapBuilder';
+import { EventsLog } from './EventsLog';
+import { LegendLayerStatusTable } from './LegendLayerStatusTable';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 
 
-export default function ConfigurationDrawer() {
+export default function DrawerTabs() {
   const cgpvContext = useContext(CGPVContext);
 
   if (!cgpvContext) {
@@ -49,7 +49,7 @@ export default function ConfigurationDrawer() {
           <ApiFunctionsTab />
         </TabPanel>
         <TabPanel value="config-builder">
-          <MapBuilderTab />
+          <MapBuilder />
         </TabPanel>
         <TabPanel value="layers-status">
           <LegendLayerStatusTable />

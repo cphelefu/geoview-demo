@@ -12,13 +12,13 @@ import {
 import { useContext, useState } from 'react';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 import _ from 'lodash';
-import PillsAutoComplete from '../../PillsAutoComplete';
+import PillsAutoComplete from './PillsAutoComplete';
 import { componentsOptions, footerTabslist, navBarOptions, appBarOptions, mapInteractionOptions, mapProjectionOptions, zoomOptions, themeOptions, CONFIG_FILES_LIST, corePackagesOptions } from '@/constants';
-import SingleSelectComplete from '../../SingleSelectAutoComplete';
-import { ConfigSaveUploadButtons } from '../../ConfigSaveUploadButtons';
+import SingleSelectComplete from './SingleSelectAutoComplete';
+import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
 
 
-export function MapBuilderTab() {
+export function MapBuilder() {
   const cgpvContext = useContext(CGPVContext);
 
   if (!cgpvContext) {
@@ -87,7 +87,6 @@ export function MapBuilderTab() {
       </Button>
 
       <FormControl component="fieldset" sx={{ mt: 4, gap: 3 }}>
-
 
         <SingleSelectComplete
           options={CONFIG_FILES_LIST}

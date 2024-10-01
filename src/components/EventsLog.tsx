@@ -41,7 +41,7 @@ export function EventsLog() {
 
       <Box sx={{ maxwidth: '450px', mb: 1 }}>
         <PillsAutoComplete
-          value={selectedEventTypes}
+          defaultValue={selectedEventTypes}
           onChange={(value) => setSelectedEventTypes(value)}
           options={eventTypeOptions}
           label="Filter by eventName" placeholder="" />
