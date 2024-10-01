@@ -240,9 +240,11 @@ export function useCgpvHook(): ICgpvHook {
 
     setTimeout(() => { // just a delay for animation purposes
       setIsLoading(false);
-    }, 2500);
-    cgpv.init(async () => {
       registerEventListeners(mapId);
+    }, 800);
+    cgpv.init(async () => {
+      console.log('registering events ');
+      //registerEventListeners(mapId);
 
     });
   };

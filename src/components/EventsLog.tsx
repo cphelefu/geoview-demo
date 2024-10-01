@@ -47,12 +47,13 @@ export function EventsLog() {
           label="Filter by eventName" placeholder="" />
       </Box>
 
-      <Button size="small" variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
+      <Button size="small" disabled={logsList.length > 0} variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
 
+      {logsList.length === 0 && <p>No events logs found</p>}
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {logsList.map((row, index) => (
-            <ListItem key={`$eventslog_index_${index}`} sx={{borderBottom: '1px solid rgba(0, 0, 0, 0.12);'}} >
+            <ListItem key={`$eventslog_index_${index}`} disableGutters disablePadding divider={true} >
               <ListItemText primary={row.eventName} secondary={row?.description} />
             </ListItem>
         ))}
