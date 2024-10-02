@@ -49,12 +49,11 @@ export function useCgpvHook(): ICgpvHook {
     console.log('registering events');
 
     cgpv.api.maps[mapId].layer.legendsLayerSet.onLayerSetUpdated((sender: any, payload: any) => {
-      console.log('legendsLayerSet updated', payload);
       const { resultSet } = payload;
       const resultArr: LegendLayerStatus[] = Object.keys(resultSet).map((key) => {
         return { layerName: resultSet[key]?.layerName, status: resultSet[key]?.layerStatus };
       });
-      console.log('resultArr', resultArr);
+
       setLegendLayerStatusList(resultArr);
     });
 
@@ -238,7 +237,9 @@ export function useCgpvHook(): ICgpvHook {
     if (configIsFilePath) {
       cgpv.api.createMapFromConfig(mapId, `${URL_TO_CONFIGS}${config}`, 800); // just use file directly if its a file path
     } else {
-      cgpv.api.createMapFromConfig(mapId, configData);
+      const toUse = _.omit(configData, ['mapDimensions']);
+      const toUseTxt = JSON.stringify(toUse, null, 4);
+      cgpv.api.createMapFromConfig(mapId, toUseTxt);
     }
 
     setTimeout(() => { // just a delay for animation purposes
