@@ -4,6 +4,6 @@ import ListOfDemosPage from "../pages/ListOfDemos";
 
 
 export const router = createBrowserRouter([
-  { path: "/", element: <ListOfDemosPage /> },
-  { path: "/general", element: <DefaultPage /> },
+  { path: "/", element: <DefaultPage /> },
+  { path: "/demos", element: <ListOfDemosPage /> },
 ],{ basename: import.meta.env.BASE_URL });

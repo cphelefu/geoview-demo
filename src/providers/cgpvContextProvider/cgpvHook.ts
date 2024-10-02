@@ -195,7 +195,7 @@ export function useCgpvHook(): ICgpvHook {
     setEventsList([]);
     setLegendLayerStatusList([]);
 
-    const mapElement = document.getElementById(mapId);
+    const mapElement = document.getElementById(mapId) as HTMLElement;
     if (!mapElement) {
       return;
       //throw new Error(`Element with id ${mapId} not found`);
@@ -222,7 +222,10 @@ export function useCgpvHook(): ICgpvHook {
     }
 
     // setting dimensions of the map
-    mapElement?.setAttribute('style', `width: ${_.get(configData, 'mapDimensions.width')}; height: ${_.get(configData, 'mapDimensions.height')}`);
+    const mapWidth = _.get(configData, 'mapDimensions.width');
+    const mapHeight = _.get(configData, 'mapDimensions.height');
+    mapElement?.setAttribute('style', `width: ${mapWidth}; min-height: ${mapHeight}; height: ${mapHeight}`);
+    mapElement.setAttribute('dataset', `height: ${mapHeight}`);
 
     //we have json; now lets start
     setIsLoading(true);
