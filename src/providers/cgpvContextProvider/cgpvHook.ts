@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   DEFAULT_MAP_HEIGHT,
   DEFAULT_MAP_WIDTH,
+  URL_TO_CONFIGS,
 } from '../../constants';
 import _ from 'lodash';
 import { EventListItemType, LegendLayerStatus } from '@/types';
@@ -14,30 +15,21 @@ export interface ICgpvHook {
   isLoading: boolean;
   configFilePath: string;
   configJson: object;
-  mapWidth: number;
-  applyWidthHeight: boolean;
-  setMapWidth: React.Dispatch<React.SetStateAction<number>>;
-  mapHeight: number;
-  setMapHeight: React.Dispatch<React.SetStateAction<number>>;
   eventsList: EventListItemType[];
   legendLayerStatusList: LegendLayerStatus[];
 
-  initializeMap: (mapId: string, config: string | object, configIsFilePath?: boolean) => void;
-  handleRemoveMap: () => string;
+  initializeMap: (config: string | object, configIsFilePath?: boolean) => void;
   handleConfigFileChange: (filePath: string | null) => void;
   handleConfigJsonChange: (data: any) => void;
-  handleApplyWidthHeight: (val: boolean) => void;
   validateConfigJson: (json: string) => string | null;
   createMapFromConfigText: (configText: string) => void;
   updateConfigProperty: (property: string, value: any) => void;
   handleApplyStateToConfigFile: () => void;
+  clearEventsList: () => void;
 }
 
 export function useCgpvHook(): ICgpvHook {
   const [mapId, setMapId] = useState<string>('sandboxMap3');
-  const [applyWidthHeight, setApplyWidthHeight] = useState<boolean>(false);
-  const [mapWidth, setMapWidth] = useState<number>(DEFAULT_MAP_WIDTH);
-  const [mapHeight, setMapHeight] = useState<number>(DEFAULT_MAP_HEIGHT);
   const [configFilePath, setConfigFilePath] = useState<string>('');
   const [configJson, setConfigJson] = useState<object>({});
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -57,12 +49,11 @@ export function useCgpvHook(): ICgpvHook {
     console.log('registering events');
 
     cgpv.api.maps[mapId].layer.legendsLayerSet.onLayerSetUpdated((sender: any, payload: any) => {
-      console.log('legendsLayerSet updated', payload);
       const { resultSet } = payload;
       const resultArr: LegendLayerStatus[] = Object.keys(resultSet).map((key) => {
         return { layerName: resultSet[key]?.layerName, status: resultSet[key]?.layerStatus };
       });
-      console.log('resultArr', resultArr);
+
       setLegendLayerStatusList(resultArr);
     });
 
@@ -119,37 +110,37 @@ export function useCgpvHook(): ICgpvHook {
     */
 
     // listen to layer item visibility changed event (any layers)
-    cgpv.api.maps[mapId].layer.onLayerVisibilityToggled((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].layer.onLayerVisibilityToggled((sender: any, payload: any) => {
       addEventToList('onLayerVisibilityToggled', `layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
     });
 
     // listen to layer item visibility changed event (any layers)
-    cgpv.api.maps[mapId].layer.onLayerItemVisibilityToggled((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].layer.onLayerItemVisibilityToggled((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `${payload.itemName} on layer ${payload.layerPath} visibility set to ${payload.visibility} - global`);
     });
 
     // listen to map zoom event
-    cgpv.api.maps[mapId].onMapZoomEnd((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapZoomEnd((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `Zoomed to level ${payload.zoom}`);
     });
 
     // listen to map move event
-    cgpv.api.maps[mapId].onMapMoveEnd((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapMoveEnd((sender: any, payload: any) => {
       addEventToList('onLayerItemVisibilityToggled', `Map moved to center latitude ${payload.lnglat[1]} and longitude ${payload.lnglat[0]}`);
     });
 
     // listen to map language changed event
-    cgpv.api.maps[mapId].onMapLanguageChanged((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].onMapLanguageChanged((sender: any, payload: any) => {
       addEventToList('onMapLanguageChanged', `Map language changed to ${payload.language}`);
     });
 
     // listen to basemap changed event
-    cgpv.api.maps[mapId].basemap.onBasemapChanged((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].basemap.onBasemapChanged((sender: any, payload: any) => {
       addEventToList('onBasemapChanged', `Basemap changed to ${payload.basemap.basemapId}`);
     });
 
     // listen to layer reordered event
-    cgpv.api.maps[mapId].stateApi.onLayersReordered((sender: any, payload:any) => {
+    cgpv.api.maps[mapId].stateApi.onLayersReordered((sender: any, payload: any) => {
       addEventToList('onLayersReordered', `Layers reordered to ${payload.orderedLayers.map((layer: any) => layer.layerPath)}`);
     });
 
@@ -161,121 +152,118 @@ export function useCgpvHook(): ICgpvHook {
   };
 
   const readConfigFile = async (filePath: string) => {
-    const res = await fetch(`${filePath}`);
+    const res = await fetch(`${URL_TO_CONFIGS}${filePath}`, { mode: 'cors' });
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
     }
     return res.json();
   }
 
-  const initializeMap = (mapId: string, config: string | object, configIsFilePath = false) => {
+  const initializeMap = (config: string | object, configIsFilePath = false) => {
     if (isInitialized) return;
-    setIsLoading(true);
-    if (configIsFilePath) {
-      readConfigFile(config as string).then((data) => {
-        console.log('i fetch a file ', data);
-        initializeMap(mapId, data);
-      });
-    } else {
-      setIsInitialized(true);
-      const configJson = typeof config === 'string' ? JSON.parse(config) : config;
-      handleCreateMap(mapId, configJson);
-      cgpv.init(() => {
-        // write some code ...
-        registerEventListeners(mapId);
-        setIsLoading(false);
-      });
-    }
+    setIsInitialized(true);
+    createNewMap(config, configIsFilePath);
   };
 
-
-  const handleConfigFileChange = async (filePath: string | null) => {
-    if (!filePath) return;
-    readConfigFile(filePath).then((data) => {
-      setEventsList([]);
-      setLegendLayerStatusList([]);
-      handleConfigJsonChange(data);
-      setConfigFilePath(filePath);
-    });
-  };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //removes map and creates a new map
-  const handleRemoveMap = (): string => {
+  const createNewMap = (config: string | object, configIsFilePath = false) => {
     cgpv.api.maps[mapId]?.remove(true);
-
     const newMapId = 'sandboxMap_' + uuidv4();
+
     // replace div with id 'sandboxMap' with another div
     const mapContainerDiv = document.getElementById('sandboxMapContainer');
+    if (!mapContainerDiv) {
+      throw new Error('Element with id sandboxMapContainer not found');
+    }
+
+    mapContainerDiv.innerHTML = '';
     const newDiv = document.createElement('div');
     newDiv.id = newMapId;
     newDiv.className = 'geoview-map2';
     mapContainerDiv?.appendChild(newDiv);
     setMapId(newMapId);
 
-    return newMapId;
-  };
-
-
-  const handleCreateMap = (theMapId: string, data: any) => {
-    const mapDiv = document.getElementById(theMapId);
-    if (applyWidthHeight) {
-      mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-    }
-
-    cgpv.api.createMapFromConfig(theMapId, JSON.stringify(data));
-    cgpv.init(() => {
-      // write some code ...
-      console.log('map created----------------------------------------');
-      registerEventListeners(theMapId);
-    });
-    setConfigJson({ ...data });
-    setMapId(theMapId);
     setTimeout(() => {
-      setIsLoading(false);
+      renderNewMap(newMapId, config, configIsFilePath);
     }, 1500);
   };
 
-  //deletes old map and creates a new map
-  const reCreateMap = () => {
-    const newMapId = handleRemoveMap();
-    setTimeout(() => {
-      //waiting for states that were prior to this function to update
-      const mapDiv = document.getElementById(newMapId);
-      if (applyWidthHeight) {
-        mapDiv?.setAttribute('style', `width: ${mapWidth}px; height: ${mapHeight}px;`);
-      }
+  const renderNewMap = async (mapId: string, config: string | object, configIsFilePath = false) => {
+    setEventsList([]);
+    setLegendLayerStatusList([]);
 
-      cgpv.api.createMapFromConfig(newMapId, JSON.stringify(configJson));
-    }, 500);
-    setMapId(newMapId);
+    const mapElement = document.getElementById(mapId) as HTMLElement;
+    if (!mapElement) {
+      return;
+      //throw new Error(`Element with id ${mapId} not found`);
+    }
+
+    let configTxt = '';
+    let configData = {};
+    if (typeof config !== 'string' && !configIsFilePath) {
+      configTxt = JSON.stringify(config);
+      configData = JSON.parse(configTxt as string);
+    }
+
+    if (configIsFilePath) {
+      const res = await readConfigFile(config as string);
+      configData = res;
+      configTxt = JSON.stringify(res)
+    }
+
+    if (_.get(configData, 'mapDimensions.width') === undefined) {
+      _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
+    }
+    if (_.get(configData, 'mapDimensions.height') === undefined) {
+      _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
+    }
+
+    // setting dimensions of the map
+    const mapWidth = _.get(configData, 'mapDimensions.width');
+    const mapHeight = _.get(configData, 'mapDimensions.height');
+    mapElement?.setAttribute('style', `width: ${mapWidth}; min-height: ${mapHeight}; height: ${mapHeight}`);
+    mapElement.setAttribute('dataset', `height: ${mapHeight}`);
+
+    //we have json; now lets start
+    setIsLoading(true);
+
+    if (configIsFilePath) {
+      setConfigFilePath(config as string);
+    }
+
+    setConfigJson({ ...configData });
+    if (configIsFilePath) {
+      cgpv.api.createMapFromConfig(mapId, `${URL_TO_CONFIGS}${config}`, 800); // just use file directly if its a file path
+    } else {
+      const toUse = _.omit(configData, ['mapDimensions']);
+      const toUseTxt = JSON.stringify(toUse, null, 4);
+      cgpv.api.createMapFromConfig(mapId, toUseTxt);
+    }
+
+    setTimeout(() => { // just a delay for animation purposes
+      setIsLoading(false);
+      registerEventListeners(mapId);
+    }, 800);
+    cgpv.init(async () => {
+      console.log('registering events ');
+      //registerEventListeners(mapId);
+
+    });
   };
 
-  const handleApplyWidthHeight = (val: boolean) => {
-    setApplyWidthHeight(val);
-    reCreateMap();
-  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /*
-  const onHeightChange = (newHeight: number) => {
-    setMapHeight(newHeight);
-    reCreateMap();
+  const handleConfigFileChange = async (filePath: string | null) => {
+    if (!filePath) return;
+    createNewMap(filePath, true);
   };
-
-  const onWidthChange = (newWidth: number) => {
-    setMapWidth(newWidth);
-    reCreateMap();
-  };*/
 
   //when config settings changes recreate map
   const handleConfigJsonChange = (data: any) => {
     // pre-select theme and projection from config file
-    setIsLoading(true);
-
-    const newMapId = handleRemoveMap();
-    setTimeout(() => {
-      // create map
-      handleCreateMap(newMapId, data);
-    }, 1500);
+    createNewMap(data, false);
   };
 
   const validateConfigJson = (json: string): string | null => {
@@ -310,28 +298,26 @@ export function useCgpvHook(): ICgpvHook {
     handleConfigJsonChange(state);
   }
 
+  const clearEventsList = () => {
+    setEventsList([]);
+  }
+
   return {
     mapId,
     configFilePath,
     configJson,
-    mapWidth,
-    setMapWidth,
-    mapHeight,
-    setMapHeight,
     isInitialized,
     isLoading,
-    applyWidthHeight,
     eventsList,
     legendLayerStatusList,
 
     initializeMap,
-    handleRemoveMap,
     handleConfigFileChange,
     handleConfigJsonChange,
     validateConfigJson,
-    handleApplyWidthHeight,
     createMapFromConfigText,
     updateConfigProperty,
-    handleApplyStateToConfigFile
+    handleApplyStateToConfigFile,
+    clearEventsList
   };
 }

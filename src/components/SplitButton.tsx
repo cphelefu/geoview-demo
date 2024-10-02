@@ -1,3 +1,7 @@
+/**
+ * @author: Christopher Phelefu
+ * @description: split button is a dual-action button that allows users to trigger a default action and a dropdown menu.
+ */
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';

@@ -3,7 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Fragment, useContext, useState } from 'react';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 import _ from 'lodash';
-import { CodeSnipperPopup } from '../../CodeSnippet';
+import { CodeSnipperPopup } from '@/components/CodeSnippet';
 import apiFunctions from './apiFunctions';
 
 export interface ApiFuncItem {

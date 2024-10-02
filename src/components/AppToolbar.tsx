@@ -1,7 +1,7 @@
 import { IconButton, Link, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import { useState } from "react";
 import SettingsIcon from '@mui/icons-material/Settings';
-import Logo from '../assets/logo.png';
+import { GEOVIEW_CORE_URL } from "@/constants";
 
 interface AppToolbarProps {
   children?: React.ReactNode;
@@ -23,7 +23,7 @@ export const AppToolbar = (props: AppToolbarProps) => {
   return (
     <Toolbar>
       {children}
-      <img src={Logo} alt="GeoView" style={{ height: 40, marginRight: 16 }} />{/* Adjust height and margin as needed */}
+      <img src={`${GEOVIEW_CORE_URL}/img/Logo.png`} alt="GeoView" style={{ height: 40, marginRight: 16 }} />{/* Adjust height and margin as needed */}
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         Canadian Geospatial Platform (CGP) - GeoView Project
       </Typography>

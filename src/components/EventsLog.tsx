@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
-import { Box, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Button, List, ListItem, ListItemText } from '@mui/material';
 import { EventListItemType, ListOptionType } from '../types';
 import PillsAutoComplete from './PillsAutoComplete';
 
@@ -11,7 +11,7 @@ export function EventsLog() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { eventsList } = cgpvContext;
+  const { eventsList, clearEventsList } = cgpvContext;
 
   const [logsList, setLogsList] = useState<EventListItemType[]>(eventsList);
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
@@ -39,18 +39,21 @@ export function EventsLog() {
     <Box>
       <h2>Events Log</h2>
 
-      <Box sx={{ maxwidth: '450px', mb: 3 }}>
+      <Box sx={{ maxwidth: '450px', mb: 1 }}>
         <PillsAutoComplete
-          value={selectedEventTypes}
+          defaultValue={selectedEventTypes}
           onChange={(value) => setSelectedEventTypes(value)}
           options={eventTypeOptions}
           label="Filter by eventName" placeholder="" />
       </Box>
 
+      <Button size="small" disabled={logsList.length === 0} variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
+
+      {logsList.length === 0 && <p>No events logs found</p>}
 
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {logsList.map((row, index) => (
-            <ListItem key={`$eventslog_index_${index}`} sx={{borderBottom: '1px solid rgba(0, 0, 0, 0.12);'}} >
+            <ListItem key={`$eventslog_index_${index}`} disableGutters disablePadding divider={true} >
               <ListItemText primary={row.eventName} secondary={row?.description} />
             </ListItem>
         ))}

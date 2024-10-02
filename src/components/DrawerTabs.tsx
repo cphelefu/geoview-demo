@@ -1,22 +1,38 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Tab } from '@mui/material';
-import { useState } from 'react';
+import { Box, CircularProgress, Tab } from '@mui/material';
+import { useContext, useState } from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import BallotIcon from '@mui/icons-material/Ballot';
 import RunCircleIcon from '@mui/icons-material/RunCircle';
 import ApiFunctionsTab from './ApiFunctionsTab/ApiFunctionsTab';
-import { MapBuilderTab } from './MapBuilderTab/MapBuilderTab';
-import { EventsLog } from '../EventsLog';
-import { LegendLayerStatusTable } from '../LegendLayerStatusTable';
+import { MapBuilder } from './MapBuilder';
+import { EventsLog } from './EventsLog';
+import { LegendLayerStatusTable } from './LegendLayerStatusTable';
+import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 
 
-export default function ConfigurationDrawer() {
+export default function DrawerTabs() {
+  const cgpvContext = useContext(CGPVContext);
+
+  if (!cgpvContext) {
+    throw new Error('CGPVContent must be used within a CGPVProvider');
+  }
+
+  const { isLoading } = cgpvContext;
   const [selectedTab, setSelectedTab] = useState('config-builder');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setSelectedTab(newValue);
   };
+
+
+  if (isLoading) {
+    return <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+      <CircularProgress />
+    </Box>;
+  }
+
 
   return (
     <Box sx={{ width: '100%', typography: 'body1', minHeight: {md: '100vh'} }}>
@@ -33,7 +49,7 @@ export default function ConfigurationDrawer() {
           <ApiFunctionsTab />
         </TabPanel>
         <TabPanel value="config-builder">
-          <MapBuilderTab />
+          <MapBuilder />
         </TabPanel>
         <TabPanel value="layers-status">
           <LegendLayerStatusTable />

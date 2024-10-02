@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 interface PillsAutoCompleteProps {
   options: ListOptionType[];
-  value?: any;
+  defaultValue?: any;
   onChange?: (value: any) => void;
   label: string;
   placeholder?: string;
@@ -16,7 +16,7 @@ interface PillsAutoCompleteProps {
 
 export default function SingleSelectComplete(props: PillsAutoCompleteProps) {
 
-  const { options, value, onChange, label, placeholder,applyGrouping = false } = props;
+  const { options, defaultValue, onChange, label, placeholder,applyGrouping = false } = props;
 
   const handleOnChange = (event: React.SyntheticEvent, newValue: ListOptionType| null) => {
     if(newValue === null) {
@@ -33,7 +33,7 @@ export default function SingleSelectComplete(props: PillsAutoCompleteProps) {
       size="small"
       options={_.orderBy(options, ['group', 'title'], ['asc', 'asc'])}
       disableClearable
-      value={options.find((option) => option.value === value)}
+      defaultValue={options.find((option) => option.value === defaultValue)}
       isOptionEqualToValue={(option, value) => option.value === value.value}
       getOptionLabel={(option) => option.title}
       groupBy={applyGrouping ? ((option) => option.group ?? 'Others') : undefined}

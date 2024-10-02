@@ -2,30 +2,31 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Divider,
   FormControl,
   FormGroup,
   FormLabel,
   Switch,
+  TextField,
 } from '@mui/material';
 import { useContext, useState } from 'react';
 import { CGPVContext } from '@/providers/cgpvContextProvider/CGPVContextProvider';
 import _ from 'lodash';
-import PillsAutoComplete from '../../PillsAutoComplete';
+import PillsAutoComplete from './PillsAutoComplete';
 import { componentsOptions, footerTabslist, navBarOptions, appBarOptions, mapInteractionOptions, mapProjectionOptions, zoomOptions, themeOptions, CONFIG_FILES_LIST, corePackagesOptions } from '@/constants';
-import SingleSelectComplete from '../../SingleSelectAutoComplete';
-import { ConfigSaveUploadButtons } from '../../ConfigSaveUploadButtons';
+import SingleSelectComplete from './SingleSelectAutoComplete';
+import { ConfigSaveUploadButtons } from './ConfigSaveUploadButtons';
 
 
-export function MapBuilderTab() {
+
+export function MapBuilder() {
   const cgpvContext = useContext(CGPVContext);
 
   if (!cgpvContext) {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, isLoading } = cgpvContext;
+  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath } = cgpvContext;
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -73,13 +74,6 @@ export function MapBuilderTab() {
     setIsModified(false);
   }
 
-
-  if (isLoading) {
-    return <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-      <CircularProgress />
-    </Box>;
-  }
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
 
@@ -95,25 +89,52 @@ export function MapBuilderTab() {
 
       <FormControl component="fieldset" sx={{ mt: 4, gap: 3 }}>
 
-
         <SingleSelectComplete
           options={CONFIG_FILES_LIST}
-          value={configFilePath}
+          defaultValue={configFilePath}
           applyGrouping={true}
           onChange={(value) => handleConfigFileChange(value)}
           label="Select Configuration File" placeholder="" />
 
         <SingleSelectComplete
           options={themeOptions}
-          value={getProperty('theme')}
+          defaultValue={getProperty('theme')}
           onChange={(value) => updateProperty('theme', value)}
           label="Display Theme" placeholder="" />
 
         <SingleSelectComplete
           options={mapInteractionOptions}
-          value={getProperty('map.interaction')}
+          defaultValue={getProperty('map.interaction')}
           onChange={(value) => updateProperty('map.interaction', value)}
           label="Map Interaction" placeholder="" />
+
+
+        <FormGroup aria-label="position">
+          <FormLabel component="legend">Map Size</FormLabel>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-width" 
+                label="Width"
+                defaultValue={getProperty('mapDimensions.width')}
+                onChange={(event) => updateProperty('mapDimensions.width', event.target.value)}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-height" 
+                label="Height"
+                defaultValue={getProperty('mapDimensions.height')}
+                onChange={(event) => updateProperty('mapDimensions.height', event.target.value)}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+          </Box>
+        </FormGroup>
 
 
         <FormGroup aria-label="position">
@@ -123,14 +144,14 @@ export function MapBuilderTab() {
             <FormControl>
               <SingleSelectComplete
                 options={zoomOptions}
-                value={getProperty('map.viewSettings.minZoom')}
+                defaultValue={getProperty('map.viewSettings.minZoom')}
                 onChange={(value) => updateProperty('map.viewSettings.minZoom', value)}
                 label="Min Zoom" placeholder="" />
             </FormControl>
             <FormControl>
               <SingleSelectComplete
                 options={zoomOptions}
-                value={getProperty('map.viewSettings.maxZoom')}
+                defaultValue={getProperty('map.viewSettings.maxZoom')}
                 onChange={(value) => updateProperty('map.viewSettings.maxZoom', value)}
                 label="Max Zoom" placeholder="" />
             </FormControl>
@@ -140,7 +161,7 @@ export function MapBuilderTab() {
         <FormGroup aria-label="map projection">
           <SingleSelectComplete
             options={mapProjectionOptions}
-            value={getProperty('map.viewSettings.projection')}
+            defaultValue={getProperty('map.viewSettings.projection')}
             onChange={(value) => updateProperty('map.viewSettings.projection', value)}
             label="Map Projection" placeholder="" />
         </FormGroup>
@@ -148,7 +169,7 @@ export function MapBuilderTab() {
         <FormGroup aria-label="Components">
           <FormLabel component="legend">Components</FormLabel>
           <PillsAutoComplete
-            value={getProperty('components')}
+            defaultValue={getProperty('components')}
             onChange={(value) => updateArrayProperty('components', value)}
             options={componentsOptions}
             label="Components Options"
@@ -159,7 +180,7 @@ export function MapBuilderTab() {
         <FormGroup aria-label="Navigation Bar Options">
           <FormLabel component="legend">Navigation Bar</FormLabel>
           <PillsAutoComplete
-            value={getProperty('navBar')}
+            defaultValue={getProperty('navBar')}
             onChange={(value) => updateArrayProperty('navBar', value)}
             options={navBarOptions}
             label="Options" placeholder="" />
@@ -173,7 +194,7 @@ export function MapBuilderTab() {
             />
           </FormLabel>
           <PillsAutoComplete
-            value={getProperty('footerBar.tabs.core')}
+            defaultValue={getProperty('footerBar.tabs.core')}
             onChange={(value) => updateArrayProperty('footerBar.tabs.core', value)}
             options={footerTabslist} label="Footer Options" placeholder="" />
         </FormGroup>
@@ -186,7 +207,7 @@ export function MapBuilderTab() {
             />
           </FormLabel>
           <PillsAutoComplete
-            value={getProperty('appBar.tabs.core')}
+            defaultValue={getProperty('appBar.tabs.core')}
             onChange={(value) => updateArrayProperty('appBar.tabs.core', value)}
             options={appBarOptions} label="App-bar Options" placeholder="" />
         </FormGroup>
@@ -194,7 +215,7 @@ export function MapBuilderTab() {
         <FormGroup aria-label="Core Packages Options">
           <FormLabel component="legend">Core Packages</FormLabel>
           <PillsAutoComplete
-            value={getProperty('corePackages')}
+            defaultValue={getProperty('corePackages')}
             onChange={(value) => updateArrayProperty('corePackages', value)}
             options={corePackagesOptions}
             label="CorePackages Options" placeholder="" />

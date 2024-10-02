@@ -12,7 +12,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 interface PillsAutoCompleteProps {
   options: ListOptionType[];
-  value?: any[];
+  defaultValue?: any[];
   onChange?: (value: any[]) => void;
   label: string;
   placeholder?: string;
@@ -20,7 +20,7 @@ interface PillsAutoCompleteProps {
 
 export default function PillsAutoComplete(props: PillsAutoCompleteProps) {
 
-  const { options, value, onChange, label, placeholder } = props;
+  const { options, defaultValue, onChange, label, placeholder } = props;
 
   const handleOnChange = (event: React.SyntheticEvent, value: ListOptionType[]) => {
     const newValue = value.map((v) => v.value);
@@ -34,7 +34,7 @@ export default function PillsAutoComplete(props: PillsAutoCompleteProps) {
       size="small"
       options={options}
       disableCloseOnSelect
-      value={options.filter((option) => value?.includes(option.value))}
+      defaultValue={options.filter((option) => defaultValue?.includes(option.value))}
       isOptionEqualToValue={(option, value) => option.value === value.value}
       getOptionLabel={(option) => option.title}
       onChange={handleOnChange}

@@ -17,10 +17,12 @@ export function LegendLayerStatusTable() {
     <Box sx={{ p: 2 }}>
       <h2>Legend Layer Status</h2>
 
+      {legendLayerStatusList.length === 0 && <p>No layers found</p>}
+
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {legendLayerStatusList.map((row, index) => (
 
-          <ListItem key={`$legend_layer_status_index_${index}`} sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12);' }} >
+          <ListItem disableGutters disablePadding divider={true} key={`$legend_layer_status_index_${index}`}>
             <ListItemText primary={row.layerName} secondary={row?.status} />
           </ListItem>
 

@@ -1,18 +1,17 @@
 import React, { useContext, useEffect } from 'react';
 import { AppBar, Box, CssBaseline, Drawer, IconButton, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import ConfigurationDrawer from './ConfigurationsDrawer/ConfigurationsDrawer';
+import DrawerTabs from './DrawerTabs';
 import { CGPVContext } from '../providers/cgpvContextProvider/CGPVContextProvider';
 import { MapRenderer } from './MapRenderer';
-import { DEFAULT_CONFIG } from '../constants';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { AppToolbar } from './AppToolbar';
+import { useSearchParams } from "react-router-dom";
+import { DEFAULT_CONFIG_FILE } from '@/constants';
 
 interface GeoViewMapProps {
   showConfigEditor?: boolean;
-  config: string | object;
-  configIsFilePath?: boolean;
   children?: React.ReactNode;
   top?: React.ReactNode;
   codeSnippet?: string;
@@ -22,29 +21,39 @@ interface GeoViewMapProps {
 function GeoViewMap(props: GeoViewMapProps) {
   const cgpvContext = useContext(CGPVContext);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
 
   if (!cgpvContext) {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { initializeMap, isInitialized } = cgpvContext;
-  const {
-    config = DEFAULT_CONFIG,
-    configIsFilePath,
-    children
-  } = props;
-
-  const drawerWidth = 440;
-
-  //when component is mounted, initialize the map
-  useEffect(() => {
-    if (!isInitialized) {
-      initializeMap('sandboxMap3', config, configIsFilePath);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const { configFilePath, initializeMap, isInitialized } = cgpvContext;
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+
+  const {
+    children
+  } = props;
+
+  const DRAWER_WIDTH = 440;
+
+  useEffect(() => {
+    if(!isInitialized) {
+      const fPath = searchParams.get('config') ?? DEFAULT_CONFIG_FILE;
+      initializeMap(fPath, true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (configFilePath && configFilePath.length > 0) {
+      setSearchParams({ config: configFilePath });
+    } else if(isInitialized) {
+      setSearchParams({ config: ''});
+    }
+  }, [configFilePath]);
+
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -71,8 +80,8 @@ function GeoViewMap(props: GeoViewMapProps) {
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
         }}
       >
         <AppToolbar>
@@ -96,7 +105,7 @@ function GeoViewMap(props: GeoViewMapProps) {
           </IconButton>
         </AppToolbar>
       </AppBar>
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="settings panel">
+      <Box component="nav" sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }} aria-label="settings panel">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           variant="temporary"
@@ -109,23 +118,23 @@ function GeoViewMap(props: GeoViewMapProps) {
           sx={{
             bgcolor: '#f4f4f4',
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
           }}
         >
-          <ConfigurationDrawer />
+          <DrawerTabs />
         </Drawer>
         <Drawer
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: '5px solid lightgray', },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH, borderRight: '5px solid lightgray', },
           }}
           open
         >
-          <ConfigurationDrawer />
+          <DrawerTabs />
         </Drawer>
       </Box>
-      <Box component="main" sx={{ flexGrow: 1, pt: 1, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+      <Box component="main" sx={{ flexGrow: 1, pt: 1, width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` } }}>
         <Toolbar />
         {props.top}
         {children}

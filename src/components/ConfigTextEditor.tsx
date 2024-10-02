@@ -4,6 +4,7 @@ import { Box, Button, Modal } from '@mui/material';
 import { useSnackbar } from '@/providers/snackbarProvider';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
+import _ from 'lodash';
 
 export function ConfigTextEditor() {
   const cgpvContext = useContext(CGPVContext);
@@ -28,7 +29,8 @@ export function ConfigTextEditor() {
   }, [configJson]);
 
   const resetEditorText = () => {
-    const jsonObj = configJson || {};
+    let jsonObj = configJson || {};
+    jsonObj = _.omit((jsonObj), ['mapDimensions']);
     const jsonTxt = JSON.stringify(jsonObj, null, 4);
     setEditorText(jsonTxt);
     setIsEditorTouched(false);
