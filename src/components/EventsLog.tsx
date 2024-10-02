@@ -47,7 +47,7 @@ export function EventsLog() {
           label="Filter by eventName" placeholder="" />
       </Box>
 
-      <Button size="small" disabled={logsList.length > 0} variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
+      <Button size="small" disabled={logsList.length === 0} variant="contained" onClick={() => clearEventsList()}>Clear All Events</Button>
 
       {logsList.length === 0 && <p>No events logs found</p>}
 
