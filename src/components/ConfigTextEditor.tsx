@@ -30,7 +30,6 @@ export function ConfigTextEditor() {
 
   const resetEditorText = () => {
     let jsonObj = configJson || {};
-    jsonObj = _.omit((jsonObj), ['mapDimensions']);
     const jsonTxt = JSON.stringify(jsonObj, null, 4);
     setEditorText(jsonTxt);
     setIsEditorTouched(false);

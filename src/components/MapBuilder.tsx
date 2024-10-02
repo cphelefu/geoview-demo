@@ -26,7 +26,7 @@ export function MapBuilder() {
     throw new Error('CGPVContent must be used within a CGPVProvider');
   }
 
-  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath } = cgpvContext;
+  const { configJson, handleConfigFileChange, handleConfigJsonChange, configFilePath, mapWidth, mapHeight, setMapWidth, setMapHeight } = cgpvContext;
 
   const [modifiedConfigJson, setModifiedConfigJson] = useState<object>(configJson);
   const [isModified, setIsModified] = useState<boolean>(false);
@@ -96,6 +96,35 @@ export function MapBuilder() {
           onChange={(value) => handleConfigFileChange(value)}
           label="Select Configuration File" placeholder="" />
 
+        <FormGroup aria-label="position">
+          <FormLabel component="legend">Map Size</FormLabel>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-width"
+                label="Width"
+                defaultValue={mapWidth}
+                onChange={(event) => { setMapWidth(event.target.value); setIsModified(true); }}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+            <FormControl>
+              <TextField
+                size="small"
+                id="map-height"
+                label="Height"
+                defaultValue={mapHeight}
+                onChange={(event) => { setMapHeight(event.target.value); setIsModified(true); }}
+                helperText="e.g. 100% or 500px"
+                variant="outlined" />
+            </FormControl>
+          </Box>
+        </FormGroup>
+
+        <Divider sx={{ my: 2 }} />
+
         <SingleSelectComplete
           options={themeOptions}
           defaultValue={getProperty('theme')}
@@ -107,34 +136,6 @@ export function MapBuilder() {
           defaultValue={getProperty('map.interaction')}
           onChange={(value) => updateProperty('map.interaction', value)}
           label="Map Interaction" placeholder="" />
-
-
-        <FormGroup aria-label="position">
-          <FormLabel component="legend">Map Size</FormLabel>
-
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-            <FormControl>
-              <TextField
-                size="small"
-                id="map-width" 
-                label="Width"
-                defaultValue={getProperty('mapDimensions.width')}
-                onChange={(event) => updateProperty('mapDimensions.width', event.target.value)}
-                helperText="e.g. 100% or 500px"
-                variant="outlined" />
-            </FormControl>
-            <FormControl>
-              <TextField
-                size="small"
-                id="map-height" 
-                label="Height"
-                defaultValue={getProperty('mapDimensions.height')}
-                onChange={(event) => updateProperty('mapDimensions.height', event.target.value)}
-                helperText="e.g. 100% or 500px"
-                variant="outlined" />
-            </FormControl>
-          </Box>
-        </FormGroup>
 
 
         <FormGroup aria-label="position">

@@ -17,6 +17,10 @@ export interface ICgpvHook {
   configJson: object;
   eventsList: EventListItemType[];
   legendLayerStatusList: LegendLayerStatus[];
+  mapWidth: string;
+  mapHeight: string;
+  setMapWidth: (width: string) => void;
+  setMapHeight: (height: string) => void;
 
   initializeMap: (config: string | object, configIsFilePath?: boolean) => void;
   handleConfigFileChange: (filePath: string | null) => void;
@@ -36,6 +40,8 @@ export function useCgpvHook(): ICgpvHook {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [eventsList, setEventsList] = useState<EventListItemType[]>([]);
   const [legendLayerStatusList, setLegendLayerStatusList] = useState<LegendLayerStatus[]>([]);
+  const [mapWidth, setMapWidth] = useState<string>(DEFAULT_MAP_WIDTH);
+  const [mapHeight, setMapHeight] = useState<string>(DEFAULT_MAP_HEIGHT);
 
 
   const addEventToList = (eventName: string, description: string) => {
@@ -213,16 +219,7 @@ export function useCgpvHook(): ICgpvHook {
       configTxt = JSON.stringify(res)
     }
 
-    if (_.get(configData, 'mapDimensions.width') === undefined) {
-      _.set(configData, 'mapDimensions.width', DEFAULT_MAP_WIDTH);
-    }
-    if (_.get(configData, 'mapDimensions.height') === undefined) {
-      _.set(configData, 'mapDimensions.height', DEFAULT_MAP_HEIGHT);
-    }
-
     // setting dimensions of the map
-    const mapWidth = _.get(configData, 'mapDimensions.width');
-    const mapHeight = _.get(configData, 'mapDimensions.height');
     mapElement?.setAttribute('style', `width: ${mapWidth}; min-height: ${mapHeight}; height: ${mapHeight}`);
     mapElement.setAttribute('dataset', `height: ${mapHeight}`);
 
@@ -237,8 +234,7 @@ export function useCgpvHook(): ICgpvHook {
     if (configIsFilePath) {
       cgpv.api.createMapFromConfig(mapId, `${URL_TO_CONFIGS}${config}`, 800); // just use file directly if its a file path
     } else {
-      const toUse = _.omit(configData, ['mapDimensions']);
-      const toUseTxt = JSON.stringify(toUse, null, 4);
+      const toUseTxt = JSON.stringify(configData, null, 4);
       cgpv.api.createMapFromConfig(mapId, toUseTxt);
     }
 
@@ -310,6 +306,10 @@ export function useCgpvHook(): ICgpvHook {
     isLoading,
     eventsList,
     legendLayerStatusList,
+    mapWidth,
+    mapHeight,
+    setMapWidth,
+    setMapHeight,
 
     initializeMap,
     handleConfigFileChange,
